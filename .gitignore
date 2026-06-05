@@ -39,3 +39,14 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Firebase credentials
+GoogleService-Info.plist
+google-services.json
+
+# Claude internal files
+.claude/
+
+# Dev outputs and docs
+OUTPUTS/
+*.pdf
