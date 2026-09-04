@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors } from '../theme/colors';
 import AuthScreen from '../screens/AuthScreen';
-import GenrePickerScreen from '../screens/GenrePickerScreen';
 import CornersListScreen from '../screens/CornersListScreen';
 import CornerDetailScreen from '../screens/CornerDetailScreen';
 import CreateCornerScreen from '../screens/CreateCornerScreen';
@@ -11,7 +10,7 @@ import BrowseScreen from '../screens/BrowseScreen';
 import { Corner } from '../firebase/firestore';
 
 type Tab = 'corners' | 'browse';
-type Stage = 'auth' | 'genre-picker' | 'app';
+type Stage = 'auth' | 'app';
 type CornersView = 'list' | 'detail' | 'create' | 'compose';
 
 function TabBar({ active, onPress }: { active: Tab; onPress: (t: Tab) => void }) {
@@ -61,18 +60,8 @@ export default function AppNavigator() {
       <AuthScreen
         onAuthenticated={(newUid) => {
           setUid(newUid);
-          setStage('genre-picker');
+          setStage('app');
         }}
-      />
-    );
-  }
-
-  if (stage === 'genre-picker') {
-    return (
-      <GenrePickerScreen
-        uid={uid}
-        phoneNumber=""
-        onComplete={() => setStage('app')}
       />
     );
   }
