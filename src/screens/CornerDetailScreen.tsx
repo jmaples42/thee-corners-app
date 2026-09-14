@@ -3,7 +3,7 @@ import {
   View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { Corner, Post, MOCK_POSTS, subscribeToCornerPosts } from '../firebase/firestore';
+import { Corner, Post, subscribeToCornerPosts, toggleReaction } from '../firebase/firestore';
 
 const REACTIONS = ['🔥', '🫀', '🌙', '🐘'];
 
@@ -22,20 +22,13 @@ function timeAgo(ts: number) {
   return `${Math.floor(d / 86400000)}d ago`;
 }
 
-function PostCard({ post, currentUid }: { post: Post; currentUid: string }) {
-  const [reactions, setReactions] = useState(post.reactions);
+function PostCard({ post, currentUid, cornerId }: { post: Post; currentUid: string; cornerId: string }) {
+  const reactions = post.reactions;
 
-  const toggleReaction = (emoji: string) => {
-    setReactions(prev => {
-      const current = prev[emoji] ?? [];
-      const hasReacted = current.includes(currentUid);
-      return {
-        ...prev,
-        [emoji]: hasReacted
-          ? current.filter(u => u !== currentUid)
-          : [...current, currentUid],
-      };
-    });
+  const handleToggleReaction = (emoji: string) => {
+    const current = reactions[emoji] ?? [];
+    const hasReacted = current.includes(currentUid);
+    toggleReaction(cornerId, post.id, emoji, currentUid, hasReacted);
   };
 
   return (
@@ -79,7 +72,7 @@ function PostCard({ post, currentUid }: { post: Post; currentUid: string }) {
             <TouchableOpacity
               key={emoji}
               style={[pc.reactionBtn, active && pc.reactionBtnActive]}
-              onPress={() => toggleReaction(emoji)}
+              onPress={() => handleToggleReaction(emoji)}
             >
               <Text style={pc.reactionEmoji}>{emoji}</Text>
               {uids.length > 0 && (
@@ -103,14 +96,11 @@ interface Props {
 }
 
 export default function CornerDetailScreen({ corner, currentUid, onBack, onCompose }: Props) {
-  const [posts, setPosts] = useState<Post[]>(
-    MOCK_POSTS.filter(p => p.cornerId === corner.id)
-  );
+  const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    // TODO: swap mock for live subscription
-    // const unsub = subscribeToCornerPosts(corner.id, setPosts);
-    // return unsub;
+    const unsub = subscribeToCornerPosts(corner.id, setPosts);
+    return unsub;
   }, [corner.id]);
 
   return (
@@ -133,7 +123,7 @@ export default function CornerDetailScreen({ corner, currentUid, onBack, onCompo
         keyExtractor={p => p.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
-        renderItem={({ item }) => <PostCard post={item} currentUid={currentUid} />}
+        renderItem={({ item }) => <PostCard post={item} currentUid={currentUid} cornerId={corner.id} />}
         ListEmptyComponent={
           <View style={s.empty}>
             <Text style={s.emptyTitle}>Nothing here yet.</Text>
