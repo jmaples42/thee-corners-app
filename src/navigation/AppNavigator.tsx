@@ -7,11 +7,13 @@ import CornerDetailScreen from '../screens/CornerDetailScreen';
 import CreateCornerScreen from '../screens/CreateCornerScreen';
 import ComposerScreen from '../screens/ComposerScreen';
 import BrowseScreen from '../screens/BrowseScreen';
-import { Corner } from '../firebase/firestore';
+import ReleaseDetailScreen from '../screens/ReleaseDetailScreen';
+import { Corner, Release } from '../firebase/firestore';
 
 type Tab = 'corners' | 'browse';
 type Stage = 'auth' | 'app';
 type CornersView = 'list' | 'detail' | 'create' | 'compose';
+type BrowseView = 'list' | 'detail';
 
 function TabBar({ active, onPress }: { active: Tab; onPress: (t: Tab) => void }) {
   return (
@@ -52,6 +54,8 @@ export default function AppNavigator() {
   const [activeTab, setActiveTab] = useState<Tab>('corners');
   const [cornersView, setCornersView] = useState<CornersView>('list');
   const [selectedCorner, setSelectedCorner] = useState<Corner | null>(null);
+  const [browseView, setBrowseView] = useState<BrowseView>('list');
+  const [selectedRelease, setSelectedRelease] = useState<Release | null>(null);
 
   // ── Auth stages ───────────────────────────────────────────────────────────
 
@@ -143,10 +147,31 @@ export default function AppNavigator() {
     }
   };
 
+  const renderBrowseTab = () => {
+    if (browseView === 'detail' && selectedRelease) {
+      return (
+        <ReleaseDetailScreen
+          release={selectedRelease}
+          currentUid={uid}
+          username="your_handle" // TODO: pull from user profile
+          onBack={() => setBrowseView('list')}
+        />
+      );
+    }
+    return (
+      <BrowseScreen
+        onOpenRelease={(release) => {
+          setSelectedRelease(release);
+          setBrowseView('detail');
+        }}
+      />
+    );
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <View style={{ flex: 1 }}>
-        {activeTab === 'corners' ? renderCornersTab() : <BrowseScreen />}
+        {activeTab === 'corners' ? renderCornersTab() : renderBrowseTab()}
       </View>
       <TabBar active={activeTab} onPress={handleTabPress} />
     </View>

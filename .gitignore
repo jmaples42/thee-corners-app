@@ -43,6 +43,7 @@ yarn-error.*
 # Firebase credentials
 GoogleService-Info.plist
 google-services.json
+service-account.json
 
 # Claude internal files
 .claude/

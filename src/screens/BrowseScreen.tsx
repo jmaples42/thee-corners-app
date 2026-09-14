@@ -1,32 +1,100 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Linking,
+  View, Text, Image, FlatList, TouchableOpacity, StyleSheet, SafeAreaView,
 } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Release, subscribeToWeeklyReleases } from '../firebase/firestore';
 
-const BROWSE_URL = 'https://corners.thefanlab.com';
+function currentWeekOf(): string {
+  const d = new Date();
+  const day = d.getDay();
+  const diffToFriday = (day >= 5 ? day - 5 : day + 2);
+  const friday = new Date(d);
+  friday.setDate(d.getDate() - diffToFriday);
+  return friday.toISOString().slice(0, 10);
+}
 
-export default function BrowseScreen() {
+function ReleaseCard({ release, onPress }: { release: Release; onPress: () => void }) {
+  return (
+    <TouchableOpacity style={rc.card} onPress={onPress} activeOpacity={0.85}>
+      <View style={rc.art}>
+        {release.coverArtUrl ? (
+          <Image source={{ uri: release.coverArtUrl }} style={rc.artImage} />
+        ) : (
+          <Text style={rc.artFallback}>{release.artist[0]?.toUpperCase()}</Text>
+        )}
+      </View>
+      <View style={rc.body}>
+        <Text style={rc.title} numberOfLines={1}><Text style={rc.artist}>{release.artist}</Text>  {release.title}</Text>
+        <View style={rc.tagRow}>
+          <View style={rc.tag}><Text style={rc.tagText}>{release.format}</Text></View>
+          <View style={rc.tag}><Text style={rc.tagText}>{release.tier === 'indie' ? 'INDIE' : 'MAJOR'}</Text></View>
+          {release.genres[0] ? (
+            <View style={rc.tag}><Text style={rc.tagText}>{release.genres[0].toUpperCase()}</Text></View>
+          ) : null}
+        </View>
+        {release.blurb ? <Text style={rc.blurb} numberOfLines={2}>{release.blurb}</Text> : null}
+        <Text style={rc.commentCount}>💬 {release.commentCount ?? 0}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+const rc = StyleSheet.create({
+  card: {
+    flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 16,
+    borderBottomWidth: 1, borderBottomColor: Colors.border,
+  },
+  art: {
+    width: 64, height: 64, backgroundColor: Colors.darkBrown,
+    alignItems: 'center', justifyContent: 'center', marginRight: 14,
+  },
+  artImage: { width: 64, height: 64 },
+  artFallback: { fontFamily: 'PlayfairDisplay_700Bold', fontSize: 26, color: Colors.olive },
+  body: { flex: 1, justifyContent: 'center' },
+  title: { fontFamily: 'PlayfairDisplay_400Regular', fontSize: 15, color: Colors.cream, marginBottom: 6 },
+  artist: { fontFamily: 'PlayfairDisplay_700Bold' },
+  tagRow: { flexDirection: 'row', gap: 6, marginBottom: 6 },
+  tag: { borderWidth: 1, borderColor: Colors.olive, paddingHorizontal: 6, paddingVertical: 1 },
+  tagText: { fontFamily: 'SpaceMono_400Regular', fontSize: 8, color: Colors.olive, letterSpacing: 1 },
+  blurb: { fontFamily: 'System', fontSize: 12, color: Colors.mutedText, lineHeight: 17, marginBottom: 4 },
+  commentCount: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: Colors.amber },
+});
+
+interface Props {
+  onOpenRelease: (release: Release) => void;
+}
+
+export default function BrowseScreen({ onOpenRelease }: Props) {
+  const [releases, setReleases] = useState<Release[]>([]);
+
+  useEffect(() => {
+    const unsub = subscribeToWeeklyReleases(currentWeekOf(), setReleases);
+    return unsub;
+  }, []);
+
   return (
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <Text style={s.wordmark}>Browse</Text>
+        <Text style={s.eyebrow}>THIS WEEK</Text>
       </View>
 
-      <View style={s.body}>
-        <Text style={s.eyebrow}>THIS WEEK</Text>
-        <Text style={s.title}>New Releases{'\n'}&amp; What Matters</Text>
-        <Text style={s.sub}>
-          The most important music out this week — with context on what critics and the culture are saying.
-        </Text>
-        <TouchableOpacity
-          style={s.btn}
-          onPress={() => Linking.openURL(BROWSE_URL)}
-          activeOpacity={0.8}
-        >
-          <Text style={s.btnText}>OPEN BROWSE →</Text>
-        </TouchableOpacity>
-      </View>
+      <FlatList
+        data={releases}
+        keyExtractor={r => r.id}
+        renderItem={({ item }) => (
+          <ReleaseCard release={item} onPress={() => onOpenRelease(item)} />
+        )}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={s.empty}>
+            <Text style={s.emptyTitle}>Nothing published yet.</Text>
+            <Text style={s.emptyBody}>Check back Friday.</Text>
+          </View>
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -38,22 +106,8 @@ const s = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
   wordmark: { fontFamily: 'PlayfairDisplay_700Bold', fontSize: 26, color: Colors.cream },
-  body: {
-    flex: 1, paddingHorizontal: 28,
-    justifyContent: 'center', alignItems: 'flex-start',
-  },
-  eyebrow: {
-    fontFamily: 'SpaceMono_400Regular', fontSize: 9,
-    color: Colors.amber, letterSpacing: 3, marginBottom: 16,
-  },
-  title: {
-    fontFamily: 'PlayfairDisplay_700Bold', fontSize: 36,
-    color: Colors.cream, lineHeight: 44, marginBottom: 20,
-  },
-  sub: {
-    fontFamily: 'System', fontSize: 15, color: Colors.mutedText,
-    lineHeight: 24, marginBottom: 36,
-  },
-  btn: { borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 24, paddingVertical: 14 },
-  btnText: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: Colors.rust, letterSpacing: 2 },
+  eyebrow: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: Colors.amber, letterSpacing: 3, marginTop: 4 },
+  empty: { padding: 48, alignItems: 'center' },
+  emptyTitle: { fontFamily: 'PlayfairDisplay_700Bold', fontSize: 20, color: Colors.cream, marginBottom: 8 },
+  emptyBody: { fontFamily: 'System', fontSize: 14, color: Colors.mutedText },
 });

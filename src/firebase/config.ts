@@ -19,4 +19,5 @@ export const COLLECTIONS = {
   USERS: 'users',
   POSTS: 'posts',
   CORNERS: 'corners',
+  RELEASES: 'releases',
 };

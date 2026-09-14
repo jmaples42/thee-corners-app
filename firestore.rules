@@ -28,5 +28,26 @@ service cloud.firestore {
                       && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions']);
       }
     }
+
+    match /releases/{releaseId} {
+      allow read: if true;    // public — this is the marketing/SEO-facing content
+      allow create, delete: if false;  // only the admin SDK (publish-releases script) creates releases
+      // commentCount is bumped by any signed-in user's comment create/delete — restrict updates to that one field
+      allow update: if isSignedIn()
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount']);
+
+      match /comments/{commentId} {
+        allow read: if true;  // public, same as releases
+        allow create: if isSignedIn()
+                      && request.resource.data.uid == request.auth.uid
+                      && request.resource.data.text.size() > 0
+                      && request.resource.data.text.size() <= 500;
+        allow update: if isSignedIn() && (
+                        resource.data.uid == request.auth.uid
+                        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions'])
+                      );
+        allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      }
+    }
   }
 }

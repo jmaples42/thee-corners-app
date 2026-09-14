@@ -6,8 +6,10 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  deleteDoc,
   arrayUnion,
   arrayRemove,
+  increment,
   query,
   orderBy,
   where,
@@ -140,6 +142,130 @@ export const toggleReaction = async (
   const ref = doc(db, COLLECTIONS.CORNERS, cornerId, 'posts', postId);
   await updateDoc(ref, {
     [`reactions.${emoji}`]: hasReacted ? arrayRemove(uid) : arrayUnion(uid),
+  });
+};
+
+// ─── Releases (Browse) ────────────────────────────────────────────────────────
+
+export interface ReleaseLinks {
+  spotify?: string;
+  bandcamp?: string;
+  appleMusic?: string;
+  youtube?: string;
+}
+
+export interface EditorsTake {
+  uid: string;
+  username: string;
+  text: string;
+  isEssential?: boolean;
+}
+
+export interface Release {
+  id: string;
+  weekOf: string;
+  artist: string;
+  title: string;
+  coverArtUrl: string;
+  format: 'LP' | 'EP' | 'Single';
+  tier: 'indie' | 'major';
+  genres: string[];
+  trackCount?: number;
+  label?: string;
+  blurb: string;
+  releaseDate: number;
+  links: ReleaseLinks;
+  editorsTake?: EditorsTake;
+  isFeatured: boolean;
+  commentCount: number;
+  createdAt: number;
+  publishedBy: string;
+}
+
+export const subscribeToWeeklyReleases = (
+  weekOf: string,
+  onReleases: (releases: Release[]) => void
+): (() => void) => {
+  const q = query(
+    collection(db, COLLECTIONS.RELEASES),
+    where('weekOf', '==', weekOf),
+    orderBy('isFeatured', 'desc')
+  );
+  return onSnapshot(q, snap => {
+    onReleases(snap.docs.map(d => ({ id: d.id, ...d.data() } as Release)));
+  });
+};
+
+export const getRelease = async (releaseId: string): Promise<Release | null> => {
+  const snap = await getDoc(doc(db, COLLECTIONS.RELEASES, releaseId));
+  return snap.exists() ? ({ id: snap.id, ...snap.data() } as Release) : null;
+};
+
+// ─── Release Comments (subcollection) ───────────────────────────────────────────
+
+export interface ReleaseComment {
+  id: string;
+  releaseId: string;
+  uid: string;
+  username: string;
+  text: string;
+  createdAt: number;
+  parentId?: string | null;
+  reactions: Record<string, string[]>;
+  isHidden?: boolean;
+}
+
+export const createReleaseComment = async (
+  releaseId: string,
+  comment: Omit<ReleaseComment, 'id'>
+): Promise<string> => {
+  const ref = await addDoc(
+    collection(db, COLLECTIONS.RELEASES, releaseId, 'comments'),
+    comment
+  );
+  await updateDoc(doc(db, COLLECTIONS.RELEASES, releaseId), {
+    commentCount: increment(1),
+  });
+  return ref.id;
+};
+
+export const subscribeToReleaseComments = (
+  releaseId: string,
+  onComments: (comments: ReleaseComment[]) => void
+): (() => void) => {
+  const q = query(
+    collection(db, COLLECTIONS.RELEASES, releaseId, 'comments'),
+    orderBy('createdAt', 'asc')
+  );
+  return onSnapshot(q, snap => {
+    onComments(
+      snap.docs
+        .map(d => ({ id: d.id, ...d.data() } as ReleaseComment))
+        .filter(c => !c.isHidden)
+    );
+  });
+};
+
+export const toggleCommentReaction = async (
+  releaseId: string,
+  commentId: string,
+  emoji: string,
+  uid: string,
+  hasReacted: boolean
+): Promise<void> => {
+  const ref = doc(db, COLLECTIONS.RELEASES, releaseId, 'comments', commentId);
+  await updateDoc(ref, {
+    [`reactions.${emoji}`]: hasReacted ? arrayRemove(uid) : arrayUnion(uid),
+  });
+};
+
+export const deleteReleaseComment = async (
+  releaseId: string,
+  commentId: string
+): Promise<void> => {
+  await deleteDoc(doc(db, COLLECTIONS.RELEASES, releaseId, 'comments', commentId));
+  await updateDoc(doc(db, COLLECTIONS.RELEASES, releaseId), {
+    commentCount: increment(-1),
   });
 };
 
