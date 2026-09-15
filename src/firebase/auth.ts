@@ -7,19 +7,20 @@
  * signInWithPhoneNumber — it's the same verificationId shape.
  *
  * The REST call carries a real reCAPTCHA token (from FirebaseRecaptchaVerifierModal
- * in AuthScreen) and an X-Ios-Bundle-Identifier header. As of this writing, real SMS
- * still doesn't reliably deliver even with those in place, Blaze billing, and an
- * open SMS region policy — Google's phone-auth abuse protection appears to require
- * Firebase App Check (device attestation) now, which this REST-based approach
- * doesn't provide. Every request still returns a valid sessionInfo with no error,
- * it just never sends. See the "Wire up Firebase App Check" follow-up task.
+ * in AuthScreen), an X-Ios-Bundle-Identifier header, and an X-Firebase-AppCheck
+ * token (see appCheck.ts, backed by App Attest). Without App Check specifically,
+ * Google's phone-auth abuse protection accepted every request here (valid
+ * sessionInfo, no error) but silently dropped the SMS instead of sending it —
+ * confirmed by process of elimination against Blaze billing, SMS region policy,
+ * and the bundle identifier header, none of which alone fixed it.
  *
- * Until App Check is wired up, use Firebase Console → Authentication → Sign-in
- * method → Phone → "Phone numbers for testing" (fixed number + fixed code, no
- * real SMS) for TestFlight testers and local dev.
+ * App Attest only works on a real device, never the Simulator. Firebase Console
+ * → Authentication → Sign-in method → Phone → "Phone numbers for testing" (fixed
+ * number + fixed code, no real SMS) remains the way to test in the Simulator.
  */
 import { signInWithCredential, PhoneAuthProvider, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth } from './config';
+import { getAppCheckToken } from './appCheck';
 
 const API_KEY = 'AIzaSyBYke6HHvcYxh-0UglHVC-pcYbdifxRBpc';
 const BASE = 'https://identitytoolkit.googleapis.com/v1';
@@ -30,15 +31,23 @@ export const sendVerificationCode = async (
   phoneNumber: string,
   recaptchaToken: string
 ): Promise<string> => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    // Identifies the request as coming from the real iOS app.
+    'X-Ios-Bundle-Identifier': 'com.theecorners.app',
+  };
+  try {
+    // Device attestation — the piece that actually unlocks real SMS sending.
+    // Unavailable in the Simulator (App Attest is real-device-only) and on
+    // devices where attestation transiently fails — degrade to no header
+    // rather than blocking sign-in entirely (test phone numbers don't need it).
+    headers['X-Firebase-AppCheck'] = await getAppCheckToken();
+  } catch {
+    // no-op — see comment above
+  }
   const res = await fetch(`${BASE}/accounts:sendVerificationCode?key=${API_KEY}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // Identifies the request as coming from the real iOS app — without this,
-      // Google's phone-auth abuse protection can accept the request (still
-      // returning a valid sessionInfo) but silently drop the SMS.
-      'X-Ios-Bundle-Identifier': 'com.theecorners.app',
-    },
+    headers,
     body: JSON.stringify({ phoneNumber, recaptchaToken }),
   });
   const data = await res.json();

@@ -38,7 +38,10 @@ export default function AuthScreen({ onAuthenticated }: Props) {
       const id = await sendVerificationCode(`+1${digits}`, token);
       setConfirmId(id);
       setStep('otp');
-    } catch { setError('Could not send code. Try again.'); }
+    } catch (e) {
+      console.error('sendVerificationCode failed:', e);
+      setError('Could not send code. Try again.');
+    }
     finally { setLoading(false); }
   };
 
