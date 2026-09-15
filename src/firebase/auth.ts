@@ -1,14 +1,22 @@
 /**
- * Phone auth via Firebase Auth REST API for the SMS step (no native SDK/reCAPTCHA
+ * Phone auth via Firebase Auth REST API for the SMS step (no native SDK
  * required — works in plain Expo/React Native), then exchanged for a real client
  * SDK session via signInWithCredential so auth.currentUser / request.auth in
  * Firestore rules are actually populated. PhoneAuthProvider.credential() doesn't
  * care that the sessionInfo came from a raw REST call rather than the SDK's own
- * (reCAPTCHA-gated) signInWithPhoneNumber — it's the same verificationId shape.
+ * signInWithPhoneNumber — it's the same verificationId shape.
  *
- * Development: add test phone numbers in Firebase Console →
- *   Authentication → Sign-in method → Phone → Phone numbers for testing.
- *   Test numbers skip SMS and reCAPTCHA entirely.
+ * The REST call carries a real reCAPTCHA token (from FirebaseRecaptchaVerifierModal
+ * in AuthScreen) and an X-Ios-Bundle-Identifier header. As of this writing, real SMS
+ * still doesn't reliably deliver even with those in place, Blaze billing, and an
+ * open SMS region policy — Google's phone-auth abuse protection appears to require
+ * Firebase App Check (device attestation) now, which this REST-based approach
+ * doesn't provide. Every request still returns a valid sessionInfo with no error,
+ * it just never sends. See the "Wire up Firebase App Check" follow-up task.
+ *
+ * Until App Check is wired up, use Firebase Console → Authentication → Sign-in
+ * method → Phone → "Phone numbers for testing" (fixed number + fixed code, no
+ * real SMS) for TestFlight testers and local dev.
  */
 import { signInWithCredential, PhoneAuthProvider, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth } from './config';
@@ -18,11 +26,20 @@ const BASE = 'https://identitytoolkit.googleapis.com/v1';
 
 let _sessionInfo: string | null = null;
 
-export const sendVerificationCode = async (phoneNumber: string): Promise<string> => {
+export const sendVerificationCode = async (
+  phoneNumber: string,
+  recaptchaToken: string
+): Promise<string> => {
   const res = await fetch(`${BASE}/accounts:sendVerificationCode?key=${API_KEY}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phoneNumber, recaptchaToken: 'NONE' }),
+    headers: {
+      'Content-Type': 'application/json',
+      // Identifies the request as coming from the real iOS app — without this,
+      // Google's phone-auth abuse protection can accept the request (still
+      // returning a valid sessionInfo) but silently drop the SMS.
+      'X-Ios-Bundle-Identifier': 'com.theecorners.app',
+    },
+    body: JSON.stringify({ phoneNumber, recaptchaToken }),
   });
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);

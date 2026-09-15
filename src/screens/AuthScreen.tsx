@@ -3,7 +3,9 @@ import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   SafeAreaView, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { Colors } from '../theme/colors';
+import { app } from '../firebase/config';
 import { sendVerificationCode, confirmVerificationCode } from '../firebase/auth';
 
 interface Props {
@@ -18,6 +20,7 @@ export default function AuthScreen({ onAuthenticated }: Props) {
   const [error, setError] = useState('');
   const [confirmId, setConfirmId] = useState('');
   const refs = useRef<(TextInput | null)[]>([]);
+  const recaptchaVerifier = useRef<FirebaseRecaptchaVerifierModal>(null);
 
   const formatPhone = (t: string) => {
     const d = t.replace(/\D/g, '');
@@ -31,10 +34,11 @@ export default function AuthScreen({ onAuthenticated }: Props) {
     if (digits.length < 10) { setError('Enter a valid 10-digit number'); return; }
     setError(''); setLoading(true);
     try {
-      const id = await sendVerificationCode(`+1${digits}`);
+      const token = await recaptchaVerifier.current!.verify();
+      const id = await sendVerificationCode(`+1${digits}`, token);
       setConfirmId(id);
       setStep('otp');
-    } catch (e) { setError('DEBUG: ' + String((e as Error)?.message ?? e)); }
+    } catch { setError('Could not send code. Try again.'); }
     finally { setLoading(false); }
   };
 
@@ -56,6 +60,11 @@ export default function AuthScreen({ onAuthenticated }: Props) {
 
   return (
     <SafeAreaView style={s.container}>
+      <FirebaseRecaptchaVerifierModal
+        ref={recaptchaVerifier}
+        firebaseConfig={app.options}
+        attemptInvisibleVerification
+      />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.inner}>
         <View style={s.logo}>
           <Text style={s.wordmark}>Thee</Text>
