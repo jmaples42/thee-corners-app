@@ -2,6 +2,7 @@
   "name": "corners",
   "version": "1.0.0",
   "main": "index.ts",
+  "type": "commonjs",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",

@@ -1,4 +1,4 @@
-import { Release } from '../../src/firebase/firestore';
+import type { Release } from '../../src/firebase/firestore';
 
 type WeekRelease = Omit<Release, 'id' | 'commentCount' | 'createdAt' | 'publishedBy'> & {
   commentCount?: number;

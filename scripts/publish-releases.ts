@@ -16,8 +16,13 @@
  */
 
 import * as admin from 'firebase-admin';
-import serviceAccount from '../service-account.json';
+import * as fs from 'fs';
+import * as path from 'path';
 import { WEEK_RELEASES } from './data/releases-2026-09-11';
+
+const serviceAccount = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '../service-account.json'), 'utf8')
+);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
