@@ -40,8 +40,8 @@ yarn-error.*
 /ios
 /android
 
-# Firebase credentials
-GoogleService-Info.plist
+# Firebase credentials (GoogleService-Info.plist has no secrets — needed by
+# EAS Build, which only uploads git-tracked files — and is committed)
 google-services.json
 service-account.json
 
