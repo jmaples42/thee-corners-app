@@ -4,7 +4,7 @@ import {
   ScrollView, ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { saveUserProfile } from '../firebase/firestore';
+import { saveUserProfile, UserProfile } from '../firebase/firestore';
 
 const GENRES = [
   { slug: 'metal', label: 'Metal', adj: 'unrelenting' },
@@ -20,12 +20,14 @@ const GENRES = [
 interface Props {
   uid: string;
   phoneNumber: string;
-  onComplete: () => void;
+  username: string;
+  onComplete: (profile: UserProfile) => void;
 }
 
-export default function GenrePickerScreen({ uid, phoneNumber, onComplete }: Props) {
+export default function GenrePickerScreen({ uid, phoneNumber, username, onComplete }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const toggle = (slug: string) => {
     setSelected(prev =>
@@ -36,18 +38,19 @@ export default function GenrePickerScreen({ uid, phoneNumber, onComplete }: Prop
   const handleEnter = async () => {
     if (selected.length === 0) return;
     setLoading(true);
+    setError('');
     try {
-      await saveUserProfile({
+      const profile: UserProfile = {
         uid,
         phoneNumber,
-        username: 'your_handle', // TODO: let user set username
+        username,
         genres: selected,
         createdAt: Date.now(),
-      });
-      onComplete();
-    } catch (e) {
-      console.error(e);
-      onComplete(); // proceed anyway in stub mode
+      };
+      await saveUserProfile(profile);
+      onComplete(profile);
+    } catch {
+      setError('Could not save your profile. Try again.');
     } finally {
       setLoading(false);
     }
@@ -86,6 +89,7 @@ export default function GenrePickerScreen({ uid, phoneNumber, onComplete }: Prop
               ? `${selected.length} CORNER${selected.length > 1 ? 'S' : ''} CLAIMED`
               : 'SELECT AT LEAST ONE'}
           </Text>
+          {error ? <Text style={s.error}>{error}</Text> : null}
           <TouchableOpacity
             style={[s.cta, selected.length === 0 && s.ctaDisabled]}
             onPress={handleEnter}
@@ -106,10 +110,10 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   inner: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 },
   header: { marginBottom: 32 },
-  title: { fontFamily: 'PlayfairDisplay_400Regular', fontSize: 36, color: Colors.cream },
-  titleItalic: { fontFamily: 'PlayfairDisplay_700Bold', fontSize: 42, color: Colors.cream, marginTop: -8 },
+  title: { fontFamily: 'Inter_400Regular', fontSize: 36, color: Colors.cream },
+  titleItalic: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 42, color: Colors.cream, marginTop: -8 },
   rule: { width: 80, height: 1, backgroundColor: Colors.rust, marginVertical: 14 },
-  sub: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: Colors.amber, letterSpacing: 3 },
+  sub: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 36 },
   tile: {
     width: '47%',
@@ -120,13 +124,14 @@ const s = StyleSheet.create({
     alignItems: 'flex-start',
   },
   tileActive: { borderColor: Colors.rust, backgroundColor: Colors.darkBrown },
-  tileLabel: { fontFamily: 'PlayfairDisplay_700Bold', fontSize: 20, color: Colors.mutedText, marginBottom: 6 },
+  tileLabel: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.mutedText, marginBottom: 6 },
   tileLabelActive: { color: Colors.cream },
-  tileAdj: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: Colors.olive, letterSpacing: 1 },
+  tileAdj: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.olive, letterSpacing: 1 },
   tileAdjActive: { color: Colors.rust },
   footer: { alignItems: 'center' },
-  selCount: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: Colors.amber, letterSpacing: 2, marginBottom: 16 },
+  selCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 2, marginBottom: 16 },
+  error: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.rust, marginBottom: 12, textAlign: 'center' },
   cta: { backgroundColor: Colors.rust, paddingVertical: 18, paddingHorizontal: 48, width: '100%', alignItems: 'center' },
   ctaDisabled: { backgroundColor: Colors.border },
-  ctaText: { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: Colors.cream, letterSpacing: 3 },
+  ctaText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 12, color: Colors.cream, letterSpacing: 3 },
 });

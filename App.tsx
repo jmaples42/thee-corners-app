@@ -1,22 +1,18 @@
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import {
-  useFonts,
-  PlayfairDisplay_400Regular,
-  PlayfairDisplay_700Bold,
-} from '@expo-google-fonts/playfair-display';
-import {
-  SpaceMono_400Regular,
-} from '@expo-google-fonts/space-mono';
+import { useFonts, Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter';
+import { BigShouldersDisplay_900Black } from '@expo-google-fonts/big-shoulders-display';
+import { JetBrainsMono_500Medium } from '@expo-google-fonts/jetbrains-mono';
 import { StatusBar } from 'expo-status-bar';
 import AppNavigator from './src/navigation/AppNavigator';
 import { Colors } from './src/theme/colors';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    PlayfairDisplay_400Regular,
-    PlayfairDisplay_700Bold,
-    SpaceMono_400Regular,
+    Inter_400Regular,
+    Inter_600SemiBold,
+    BigShouldersDisplay_900Black,
+    JetBrainsMono_500Medium,
   });
 
   if (!fontsLoaded) {
@@ -29,7 +25,7 @@ export default function App() {
 
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <AppNavigator />
     </>
   );

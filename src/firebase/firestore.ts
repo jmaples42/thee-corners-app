@@ -76,6 +76,13 @@ export const getUserByPhone = async (phoneNumber: string): Promise<UserProfile |
   return snap.docs[0].data() as UserProfile;
 };
 
+export const getUserByUsername = async (username: string): Promise<UserProfile | null> => {
+  const q = query(collection(db, COLLECTIONS.USERS), where('username', '==', username));
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  return snap.docs[0].data() as UserProfile;
+};
+
 // ─── Corners ─────────────────────────────────────────────────────────────────
 
 export const createCorner = async (corner: Omit<Corner, 'id'>): Promise<string> => {
@@ -177,6 +184,7 @@ export interface Release {
   links: ReleaseLinks;
   editorsTake?: EditorsTake;
   isFeatured: boolean;
+  stillInRotation?: boolean;
   commentCount: number;
   createdAt: number;
   publishedBy: string;

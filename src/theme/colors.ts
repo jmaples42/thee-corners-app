@@ -1,11 +1,13 @@
+// Matches the Corners marketing site's palette (corners.thefanlab.com) —
+// warm bone paper with aubergine-black ink, Veckatimest-inspired.
 export const Colors = {
-  background: '#1a1410',
-  cream: '#f5f0e8',
-  rust: '#c4622d',
-  amber: '#d4935a',
-  olive: '#7a7a5a',
-  darkBrown: '#2a1f15',
-  cardBg: '#211a13',
-  border: '#3a2e22',
-  mutedText: '#8a7a65',
+  background: '#f1e9cf', // bone
+  cream: '#1a120e', // ink — primary text (site's --ink)
+  rust: '#a82a5a', // rose — primary accent (site's --rose)
+  amber: '#c4761a', // ochre — secondary accent (site's --ochre)
+  olive: '#5b6a33', // olive — tertiary accent / indie tier
+  darkBrown: '#e5d9b3', // bone-2 — secondary surface
+  cardBg: '#f8f1d6', // cream — card surface
+  border: '#c5b790', // rule — hairlines/dividers
+  mutedText: '#6e5f4a', // ink-3 — secondary text
 };

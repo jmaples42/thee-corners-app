@@ -112,19 +112,19 @@ const s = StyleSheet.create({
     paddingHorizontal: 20, paddingVertical: 14,
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
-  cancelBtn: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: Colors.mutedText, letterSpacing: 1 },
-  navTitle: { fontFamily: 'PlayfairDisplay_700Bold', fontSize: 18, color: Colors.cream },
+  cancelBtn: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.mutedText, letterSpacing: 1 },
+  navTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 18, color: Colors.cream },
   scroll: { flex: 1 },
   section: { paddingHorizontal: 20, marginTop: 28 },
-  label: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: Colors.amber, letterSpacing: 3, marginBottom: 8 },
-  hint: { fontFamily: 'System', fontSize: 12, color: Colors.mutedText, marginBottom: 14, lineHeight: 18 },
+  label: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3, marginBottom: 8 },
+  hint: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, marginBottom: 14, lineHeight: 18 },
   nameInput: {
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
-    padding: 16, fontFamily: 'PlayfairDisplay_400Regular', fontSize: 18, color: Colors.cream,
+    padding: 16, fontFamily: 'Inter_400Regular', fontSize: 18, color: Colors.cream,
   },
   phoneInput: {
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
-    padding: 14, fontFamily: 'System', fontSize: 14, color: Colors.cream,
+    padding: 14, fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream,
   },
   phoneInputBorderless: { borderTopWidth: 0 },
   createBtn: {
@@ -132,5 +132,5 @@ const s = StyleSheet.create({
     marginHorizontal: 20, alignItems: 'center', marginTop: 36,
   },
   createBtnDisabled: { backgroundColor: Colors.border },
-  createBtnText: { fontFamily: 'SpaceMono_400Regular', fontSize: 12, color: Colors.cream, letterSpacing: 3 },
+  createBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 12, color: Colors.cream, letterSpacing: 3 },
 });

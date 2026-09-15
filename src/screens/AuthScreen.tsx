@@ -7,7 +7,7 @@ import { Colors } from '../theme/colors';
 import { sendVerificationCode, confirmVerificationCode } from '../firebase/auth';
 
 interface Props {
-  onAuthenticated: (uid: string) => void;
+  onAuthenticated: (uid: string, phoneNumber: string) => void;
 }
 
 export default function AuthScreen({ onAuthenticated }: Props) {
@@ -34,7 +34,7 @@ export default function AuthScreen({ onAuthenticated }: Props) {
       const id = await sendVerificationCode(`+1${digits}`);
       setConfirmId(id);
       setStep('otp');
-    } catch { setError('Could not send code. Try again.'); }
+    } catch (e) { setError('DEBUG: ' + String((e as Error)?.message ?? e)); }
     finally { setLoading(false); }
   };
 
@@ -49,7 +49,7 @@ export default function AuthScreen({ onAuthenticated }: Props) {
     setError(''); setLoading(true);
     try {
       const user = await confirmVerificationCode(confirmId, code);
-      onAuthenticated(user.uid);
+      onAuthenticated(user.uid, user.phoneNumber);
     } catch { setError('Invalid code. Try again.'); }
     finally { setLoading(false); }
   };
@@ -122,20 +122,20 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   inner: { flex: 1, paddingHorizontal: 32, justifyContent: 'center' },
   logo: { alignItems: 'center', marginBottom: 56 },
-  wordmark: { fontFamily: 'PlayfairDisplay_700Bold', fontSize: 52, color: Colors.cream, lineHeight: 56, letterSpacing: 2 },
+  wordmark: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 52, color: Colors.cream, lineHeight: 56, letterSpacing: 2 },
   rule: { width: 120, height: 1, backgroundColor: Colors.rust, marginVertical: 12 },
-  tagline: { fontFamily: 'SpaceMono_400Regular', fontSize: 9, color: Colors.amber, letterSpacing: 3 },
-  label: { fontFamily: 'SpaceMono_400Regular', fontSize: 10, color: Colors.amber, letterSpacing: 3, marginBottom: 12 },
-  sub: { fontFamily: 'System', fontSize: 13, color: Colors.mutedText, marginBottom: 20, marginTop: -8 },
+  tagline: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3 },
+  label: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber, letterSpacing: 3, marginBottom: 12 },
+  sub: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.mutedText, marginBottom: 20, marginTop: -8 },
   phoneRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.border, marginBottom: 24 },
   cc: { paddingBottom: 12, marginRight: 12, borderRightWidth: 1, borderRightColor: Colors.border, paddingRight: 12, justifyContent: 'center' },
-  ccText: { fontFamily: 'SpaceMono_400Regular', fontSize: 16, color: Colors.cream },
-  phoneInput: { flex: 1, fontFamily: 'SpaceMono_400Regular', fontSize: 20, color: Colors.cream, paddingBottom: 12 },
+  ccText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 16, color: Colors.cream },
+  phoneInput: { flex: 1, fontFamily: 'JetBrainsMono_500Medium', fontSize: 20, color: Colors.cream, paddingBottom: 12 },
   otpRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
-  otpBox: { width: 44, height: 56, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg, textAlign: 'center', fontFamily: 'SpaceMono_400Regular', fontSize: 24, color: Colors.cream },
+  otpBox: { width: 44, height: 56, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg, textAlign: 'center', fontFamily: 'JetBrainsMono_500Medium', fontSize: 24, color: Colors.cream },
   btn: { backgroundColor: Colors.rust, paddingVertical: 16, alignItems: 'center', marginBottom: 24 },
-  btnText: { fontFamily: 'SpaceMono_400Regular', fontSize: 13, color: Colors.cream, letterSpacing: 3 },
-  disclaimer: { fontFamily: 'System', fontSize: 12, color: Colors.mutedText, textAlign: 'center', lineHeight: 18 },
-  back: { fontFamily: 'SpaceMono_400Regular', fontSize: 11, color: Colors.amber, textAlign: 'center', letterSpacing: 1 },
-  error: { fontFamily: 'System', fontSize: 13, color: Colors.rust, marginBottom: 12 },
+  btnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 13, color: Colors.cream, letterSpacing: 3 },
+  disclaimer: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, textAlign: 'center', lineHeight: 18 },
+  back: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.amber, textAlign: 'center', letterSpacing: 1 },
+  error: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.rust, marginBottom: 12 },
 });

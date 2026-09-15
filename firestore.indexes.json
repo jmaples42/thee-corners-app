@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "releases",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "weekOf", "order": "ASCENDING" },
+        { "fieldPath": "isFeatured", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "corners",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "memberUids", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "lastActivityAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
