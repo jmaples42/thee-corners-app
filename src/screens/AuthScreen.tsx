@@ -6,7 +6,7 @@ import {
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { Colors } from '../theme/colors';
 import { app } from '../firebase/config';
-import { sendVerificationCode, confirmVerificationCode } from '../firebase/auth';
+import { sendVerificationCode, confirmVerificationCode, lastAppCheckStatus } from '../firebase/auth';
 
 interface Props {
   onAuthenticated: (uid: string, phoneNumber: string) => void;
@@ -19,6 +19,7 @@ export default function AuthScreen({ onAuthenticated }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [confirmId, setConfirmId] = useState('');
+  const [appCheckDebug, setAppCheckDebug] = useState('');
   const refs = useRef<(TextInput | null)[]>([]);
   const recaptchaVerifier = useRef<FirebaseRecaptchaVerifierModal>(null);
 
@@ -42,7 +43,10 @@ export default function AuthScreen({ onAuthenticated }: Props) {
       console.error('sendVerificationCode failed:', e);
       setError('Could not send code. Try again.');
     }
-    finally { setLoading(false); }
+    finally {
+      setLoading(false);
+      setAppCheckDebug(lastAppCheckStatus);
+    }
   };
 
   const handleOtp = (val: string, i: number) => {
@@ -97,11 +101,13 @@ export default function AuthScreen({ onAuthenticated }: Props) {
               {loading ? <ActivityIndicator color={Colors.cream} /> : <Text style={s.btnText}>SEND CODE</Text>}
             </TouchableOpacity>
             <Text style={s.disclaimer}>No passwords. No algorithm. Just your number.</Text>
+            {appCheckDebug ? <Text style={s.debug}>AppCheck: {appCheckDebug}</Text> : null}
           </View>
         ) : (
           <View>
             <Text style={s.label}>ENTER CODE</Text>
             <Text style={s.sub}>Sent to {phone}</Text>
+            {appCheckDebug ? <Text style={s.debug}>AppCheck: {appCheckDebug}</Text> : null}
             <View style={s.otpRow}>
               {otp.map((d, i) => (
                 <TextInput
@@ -150,4 +156,5 @@ const s = StyleSheet.create({
   disclaimer: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, textAlign: 'center', lineHeight: 18 },
   back: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.amber, textAlign: 'center', letterSpacing: 1 },
   error: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.rust, marginBottom: 12 },
+  debug: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.olive, marginTop: 16 },
 });

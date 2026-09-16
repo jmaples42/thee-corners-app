@@ -27,6 +27,10 @@ const BASE = 'https://identitytoolkit.googleapis.com/v1';
 
 let _sessionInfo: string | null = null;
 
+// TEMP diagnostic — surfaced in AuthScreen while confirming App Check actually
+// unlocks SMS delivery on a real device. Remove once resolved.
+export let lastAppCheckStatus = 'not attempted';
+
 export const sendVerificationCode = async (
   phoneNumber: string,
   recaptchaToken: string
@@ -41,9 +45,11 @@ export const sendVerificationCode = async (
     // Unavailable in the Simulator (App Attest is real-device-only) and on
     // devices where attestation transiently fails — degrade to no header
     // rather than blocking sign-in entirely (test phone numbers don't need it).
-    headers['X-Firebase-AppCheck'] = await getAppCheckToken();
-  } catch {
-    // no-op — see comment above
+    const token = await getAppCheckToken();
+    headers['X-Firebase-AppCheck'] = token;
+    lastAppCheckStatus = `ok, token starts: ${token.slice(0, 16)}…`;
+  } catch (e) {
+    lastAppCheckStatus = `FAILED: ${String((e as Error)?.message ?? e)}`;
   }
   const res = await fetch(`${BASE}/accounts:sendVerificationCode?key=${API_KEY}`, {
     method: 'POST',
