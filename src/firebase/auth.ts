@@ -1,79 +1,45 @@
 /**
- * Phone auth via Firebase Auth REST API for the SMS step (no native SDK
- * required — works in plain Expo/React Native), then exchanged for a real client
- * SDK session via signInWithCredential so auth.currentUser / request.auth in
- * Firestore rules are actually populated. PhoneAuthProvider.credential() doesn't
- * care that the sessionInfo came from a raw REST call rather than the SDK's own
- * signInWithPhoneNumber — it's the same verificationId shape.
+ * Phone auth via Firebase Auth's own signInWithPhoneNumber, using
+ * FirebaseRecaptchaVerifierModal (AuthScreen) as the ApplicationVerifier.
  *
- * The REST call carries a real reCAPTCHA token (from FirebaseRecaptchaVerifierModal
- * in AuthScreen), an X-Ios-Bundle-Identifier header, and an X-Firebase-AppCheck
- * token (see appCheck.ts, backed by App Attest). Without App Check specifically,
- * Google's phone-auth abuse protection accepted every request here (valid
- * sessionInfo, no error) but silently dropped the SMS instead of sending it —
- * confirmed by process of elimination against Blaze billing, SMS region policy,
- * and the bundle identifier header, none of which alone fixed it.
- *
- * App Attest only works on a real device, never the Simulator. Firebase Console
- * → Authentication → Sign-in method → Phone → "Phone numbers for testing" (fixed
- * number + fixed code, no real SMS) remains the way to test in the Simulator.
+ * This replaces an earlier hand-rolled version that called the Identity
+ * Toolkit REST API directly (accounts:sendVerificationCode) with manually
+ * attached reCAPTCHA/App-Check/bundle-ID headers. That approach kept
+ * returning a valid sessionInfo with no error, yet never actually sent an
+ * SMS — even after fixing every checkable cause one at a time (a real
+ * reCAPTCHA token, Blaze billing, SMS region policy, X-Ios-Bundle-Identifier,
+ * and finally real App Check with App Attest enforced and 100% of tokens
+ * verified server-side). With everything Google-side confirmed correct and
+ * still no delivery, the REST reimplementation itself was the remaining
+ * suspect — Google's delivery logic may only trust requests that go through
+ * the SDK's actual code path, not a hand-built equivalent of it. See
+ * appCheck.ts for how a real App Attest token still reaches this call
+ * despite going through the plain JS SDK now.
  */
-import { signInWithCredential, PhoneAuthProvider, signOut as firebaseSignOut } from 'firebase/auth';
+import {
+  signInWithPhoneNumber,
+  ApplicationVerifier,
+  ConfirmationResult,
+  signOut as firebaseSignOut,
+} from 'firebase/auth';
 import { auth } from './config';
-import { getAppCheckToken } from './appCheck';
+import './appCheck';
 
-const API_KEY = 'AIzaSyBYke6HHvcYxh-0UglHVC-pcYbdifxRBpc';
-const BASE = 'https://identitytoolkit.googleapis.com/v1';
-
-let _sessionInfo: string | null = null;
-
-// TEMP diagnostic — surfaced in AuthScreen while confirming App Check actually
-// unlocks SMS delivery on a real device. Remove once resolved.
-export let lastAppCheckStatus = 'not attempted';
+let _confirmationResult: ConfirmationResult | null = null;
 
 export const sendVerificationCode = async (
   phoneNumber: string,
-  recaptchaToken: string
-): Promise<string> => {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    // Identifies the request as coming from the real iOS app.
-    'X-Ios-Bundle-Identifier': 'com.theecorners.app',
-  };
-  try {
-    // Device attestation — the piece that actually unlocks real SMS sending.
-    // Unavailable in the Simulator (App Attest is real-device-only) and on
-    // devices where attestation transiently fails — degrade to no header
-    // rather than blocking sign-in entirely (test phone numbers don't need it).
-    const token = await getAppCheckToken();
-    headers['X-Firebase-AppCheck'] = token;
-    lastAppCheckStatus = `ok, token starts: ${token.slice(0, 16)}…`;
-  } catch (e) {
-    lastAppCheckStatus = `FAILED: ${String((e as Error)?.message ?? e)}`;
-  }
-  const res = await fetch(`${BASE}/accounts:sendVerificationCode?key=${API_KEY}`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ phoneNumber, recaptchaToken }),
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  _sessionInfo = data.sessionInfo;
-  return data.sessionInfo;
+  verifier: ApplicationVerifier
+): Promise<void> => {
+  _confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, verifier);
 };
 
 export const confirmVerificationCode = async (
-  sessionInfo: string,
   code: string
 ): Promise<{ uid: string; phoneNumber: string }> => {
-  const info = sessionInfo || _sessionInfo;
-  if (!info) throw new Error('No session info — call sendVerificationCode first');
+  if (!_confirmationResult) throw new Error('No pending verification — call sendVerificationCode first');
 
-  // Establish a real Firebase Auth session (populates auth.currentUser and,
-  // via that, request.auth in Firestore security rules) instead of just
-  // trusting the REST response's uid/phoneNumber locally.
-  const credential = PhoneAuthProvider.credential(info, code);
-  const result = await signInWithCredential(auth, credential);
+  const result = await _confirmationResult.confirm(code);
 
   return {
     uid: result.user.uid,
@@ -82,6 +48,6 @@ export const confirmVerificationCode = async (
 };
 
 export const signOut = async (): Promise<void> => {
-  _sessionInfo = null;
+  _confirmationResult = null;
   await firebaseSignOut(auth);
 };
