@@ -5,88 +5,9 @@ import {
 } from 'react-native';
 import { Colors } from '../theme/colors';
 import {
-  Release, ReleaseComment, subscribeToReleaseComments,
-  createReleaseComment, toggleCommentReaction, deleteReleaseComment,
+  Release, ReleaseComment, subscribeToReleaseComments, createReleaseComment,
 } from '../firebase/firestore';
-
-const REACTIONS = ['🔥', '🫀', '🌙', '🐘'];
-
-function timeAgo(ts: number) {
-  const d = Date.now() - ts;
-  if (d < 3600000) return `${Math.floor(d / 60000)}m ago`;
-  if (d < 86400000) return `${Math.floor(d / 3600000)}h ago`;
-  return `${Math.floor(d / 86400000)}d ago`;
-}
-
-function CommentCard({
-  comment, currentUid, releaseId,
-}: { comment: ReleaseComment; currentUid: string; releaseId: string }) {
-  const reactions = comment.reactions ?? {};
-  const isMine = comment.uid === currentUid;
-
-  const handleToggleReaction = (emoji: string) => {
-    const current = reactions[emoji] ?? [];
-    const hasReacted = current.includes(currentUid);
-    toggleCommentReaction(releaseId, comment.id, emoji, currentUid, hasReacted);
-  };
-
-  return (
-    <View style={cc.card}>
-      <View style={cc.header}>
-        <View style={cc.avatar}>
-          <Text style={cc.avatarText}>{comment.username[0]?.toUpperCase()}</Text>
-        </View>
-        <View style={cc.headerRight}>
-          <Text style={cc.username}>@{comment.username}</Text>
-          <Text style={cc.timestamp}>{timeAgo(comment.createdAt)}</Text>
-        </View>
-        {isMine && (
-          <TouchableOpacity onPress={() => deleteReleaseComment(releaseId, comment.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Text style={cc.delete}>Delete</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      <Text style={cc.text}>{comment.text}</Text>
-      <View style={cc.reactionStrip}>
-        {REACTIONS.map(emoji => {
-          const uids = reactions[emoji] ?? [];
-          const active = uids.includes(currentUid);
-          return (
-            <TouchableOpacity
-              key={emoji}
-              style={[cc.reactionBtn, active && cc.reactionBtnActive]}
-              onPress={() => handleToggleReaction(emoji)}
-            >
-              <Text style={cc.reactionEmoji}>{emoji}</Text>
-              {uids.length > 0 && <Text style={cc.reactionCount}>{uids.length}</Text>}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </View>
-  );
-}
-
-const cc = StyleSheet.create({
-  card: { paddingHorizontal: 20, paddingTop: 16 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  avatar: { width: 30, height: 30, backgroundColor: Colors.border, alignItems: 'center', justifyContent: 'center', marginRight: 10 },
-  avatarText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 13, color: Colors.amber },
-  headerRight: { flex: 1 },
-  username: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.cream },
-  timestamp: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText, marginTop: 1 },
-  delete: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText, letterSpacing: 1 },
-  text: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 21, marginBottom: 10, opacity: 0.92 },
-  reactionStrip: { flexDirection: 'row', gap: 6, marginBottom: 14 },
-  reactionBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    paddingHorizontal: 8, paddingVertical: 6,
-    borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
-  },
-  reactionBtnActive: { borderColor: Colors.rust, backgroundColor: '#2a1510' },
-  reactionEmoji: { fontSize: 13 },
-  reactionCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText },
-});
+import CommentCard from '../components/CommentCard';
 
 interface Props {
   release: Release;

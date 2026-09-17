@@ -14,6 +14,7 @@ import {
   orderBy,
   where,
   onSnapshot,
+  collectionGroup,
 } from 'firebase/firestore';
 import { db, COLLECTIONS } from './config';
 
@@ -218,6 +219,7 @@ export interface ReleaseComment {
   username: string;
   text: string;
   createdAt: number;
+  editedAt?: number;
   parentId?: string | null;
   reactions: Record<string, string[]>;
   isHidden?: boolean;
@@ -244,6 +246,35 @@ export const subscribeToReleaseComments = (
   const q = query(
     collection(db, COLLECTIONS.RELEASES, releaseId, 'comments'),
     orderBy('createdAt', 'asc')
+  );
+  return onSnapshot(q, snap => {
+    onComments(
+      snap.docs
+        .map(d => ({ id: d.id, ...d.data() } as ReleaseComment))
+        .filter(c => !c.isHidden)
+    );
+  });
+};
+
+export const updateReleaseComment = async (
+  releaseId: string,
+  commentId: string,
+  text: string
+): Promise<void> => {
+  await updateDoc(doc(db, COLLECTIONS.RELEASES, releaseId, 'comments', commentId), {
+    text,
+    editedAt: Date.now(),
+  });
+};
+
+export const subscribeToCommentsByUser = (
+  uid: string,
+  onComments: (comments: ReleaseComment[]) => void
+): (() => void) => {
+  const q = query(
+    collectionGroup(db, 'comments'),
+    where('uid', '==', uid),
+    orderBy('createdAt', 'desc')
   );
   return onSnapshot(q, snap => {
     onComments(

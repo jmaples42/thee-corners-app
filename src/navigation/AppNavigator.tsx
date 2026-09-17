@@ -310,7 +310,7 @@ export default function AppNavigator() {
     switch (activeTab) {
       case 'home': return renderHomeTab();
       case 'new': return renderNewTab();
-      case 'me': return <ProfileScreen username={profile.username} genres={profile.genres} />;
+      case 'me': return <ProfileScreen uid={uid} username={profile.username} genres={profile.genres} />;
       case 'settings': return <SettingsScreen onSignOut={() => signOut().finally(resetToSignedOut)} />;
     }
   };

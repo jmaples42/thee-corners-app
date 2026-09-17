@@ -15,6 +15,14 @@
         { "fieldPath": "memberUids", "arrayConfig": "CONTAINS" },
         { "fieldPath": "lastActivityAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "comments",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "uid", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   SafeAreaView, KeyboardAvoidingView, Platform, ActivityIndicator,
@@ -15,10 +15,10 @@ interface Props {
 export default function AuthScreen({ onAuthenticated }: Props) {
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const refs = useRef<(TextInput | null)[]>([]);
+  const otpRef = useRef<TextInput>(null);
   const recaptchaVerifier = useRef<FirebaseRecaptchaVerifierModal>(null);
 
   const formatPhone = (t: string) => {
@@ -42,13 +42,12 @@ export default function AuthScreen({ onAuthenticated }: Props) {
     finally { setLoading(false); }
   };
 
-  const handleOtp = (val: string, i: number) => {
-    const next = [...otp]; next[i] = val; setOtp(next);
-    if (val && i < 5) refs.current[i + 1]?.focus();
+  const handleOtpChange = (val: string) => {
+    setError('');
+    setOtp(val.replace(/\D/g, '').slice(0, 6));
   };
 
-  const handleVerify = async () => {
-    const code = otp.join('');
+  const handleVerify = async (code: string) => {
     if (code.length < 6) { setError('Enter the full 6-digit code'); return; }
     setError(''); setLoading(true);
     try {
@@ -60,6 +59,14 @@ export default function AuthScreen({ onAuthenticated }: Props) {
     }
     finally { setLoading(false); }
   };
+
+  // iOS offers the code from Messages as a QuickType suggestion (via
+  // textContentType="oneTimeCode" below) and fills it into the hidden input
+  // in one shot — auto-submit as soon as all 6 digits land, from typing or
+  // that autofill.
+  useEffect(() => {
+    if (otp.length === 6) handleVerify(otp);
+  }, [otp]);
 
   return (
     <SafeAreaView style={s.container}>
@@ -103,24 +110,29 @@ export default function AuthScreen({ onAuthenticated }: Props) {
             <Text style={s.label}>ENTER CODE</Text>
             <Text style={s.sub}>Sent to {phone}</Text>
             <View style={s.otpRow}>
-              {otp.map((d, i) => (
-                <TextInput
-                  key={i}
-                  ref={r => { refs.current[i] = r; }}
-                  style={s.otpBox}
-                  value={d}
-                  onChangeText={v => handleOtp(v.slice(-1), i)}
-                  keyboardType="number-pad"
-                  maxLength={1}
-                  selectTextOnFocus
-                />
+              {[0, 1, 2, 3, 4, 5].map(i => (
+                <View key={i} style={s.otpBox}>
+                  <Text style={s.otpDigit}>{otp[i] || ''}</Text>
+                </View>
               ))}
+              <TextInput
+                ref={otpRef}
+                style={s.otpHiddenInput}
+                value={otp}
+                onChangeText={handleOtpChange}
+                keyboardType="number-pad"
+                textContentType="oneTimeCode"
+                autoComplete="sms-otp"
+                maxLength={6}
+                caretHidden
+                autoFocus
+              />
             </View>
             {error ? <Text style={s.error}>{error}</Text> : null}
-            <TouchableOpacity style={s.btn} onPress={handleVerify} disabled={loading}>
+            <TouchableOpacity style={s.btn} onPress={() => handleVerify(otp)} disabled={loading}>
               {loading ? <ActivityIndicator color={Colors.cream} /> : <Text style={s.btnText}>VERIFY</Text>}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { setStep('phone'); setOtp(['','','','','','']); setError(''); }}>
+            <TouchableOpacity onPress={() => { setStep('phone'); setOtp(''); setError(''); }}>
               <Text style={s.back}>← Back</Text>
             </TouchableOpacity>
           </View>
@@ -143,8 +155,10 @@ const s = StyleSheet.create({
   cc: { paddingBottom: 12, marginRight: 12, borderRightWidth: 1, borderRightColor: Colors.border, paddingRight: 12, justifyContent: 'center' },
   ccText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 16, color: Colors.cream },
   phoneInput: { flex: 1, fontFamily: 'JetBrainsMono_500Medium', fontSize: 20, color: Colors.cream, paddingBottom: 12 },
-  otpRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
-  otpBox: { width: 44, height: 56, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg, textAlign: 'center', fontFamily: 'JetBrainsMono_500Medium', fontSize: 24, color: Colors.cream },
+  otpRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24, position: 'relative' },
+  otpBox: { width: 44, height: 56, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg, alignItems: 'center', justifyContent: 'center' },
+  otpDigit: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 24, color: Colors.cream },
+  otpHiddenInput: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0 },
   btn: { backgroundColor: Colors.rust, paddingVertical: 16, alignItems: 'center', marginBottom: 24 },
   btnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 13, color: Colors.cream, letterSpacing: 3 },
   disclaimer: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, textAlign: 'center', lineHeight: 18 },
