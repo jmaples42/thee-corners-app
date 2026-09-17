@@ -51,3 +51,6 @@ service-account.json
 # Dev outputs and docs
 OUTPUTS/
 *.pdf
+
+# Temp compile output for scripts/publish.sh
+.publish-build/
