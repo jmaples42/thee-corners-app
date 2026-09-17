@@ -12,7 +12,13 @@ function currentWeekOf(): string {
   const diffToFriday = (day >= 5 ? day - 5 : day + 2);
   const friday = new Date(d);
   friday.setDate(d.getDate() - diffToFriday);
-  return friday.toISOString().slice(0, 10);
+  // Build the date string from local getters, not toISOString() (which renders
+  // in UTC) — otherwise this silently rolls forward a day during local evening
+  // hours, matching no stored weekOf and leaving Browse empty every night.
+  const yyyy = friday.getFullYear();
+  const mm = String(friday.getMonth() + 1).padStart(2, '0');
+  const dd = String(friday.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 function ReleaseCard({ release, onPress }: { release: Release; onPress: () => void }) {
