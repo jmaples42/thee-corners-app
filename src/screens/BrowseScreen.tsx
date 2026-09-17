@@ -3,21 +3,16 @@ import {
   View, Text, Image, FlatList, TouchableOpacity, StyleSheet, SafeAreaView,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { Release, subscribeToWeeklyReleases } from '../firebase/firestore';
+import { Release, subscribeToLatestReleases } from '../firebase/firestore';
 import { TRENDING_2026 } from '../data/trending2026';
 
-function currentWeekOf(): string {
+// subscribeToLatestReleases queries the latest published batch on or before
+// this date, so it only needs today's local date — not which Friday it is.
+function todayLocalDateString(): string {
   const d = new Date();
-  const day = d.getDay();
-  const diffToFriday = (day >= 5 ? day - 5 : day + 2);
-  const friday = new Date(d);
-  friday.setDate(d.getDate() - diffToFriday);
-  // Build the date string from local getters, not toISOString() (which renders
-  // in UTC) — otherwise this silently rolls forward a day during local evening
-  // hours, matching no stored weekOf and leaving Browse empty every night.
-  const yyyy = friday.getFullYear();
-  const mm = String(friday.getMonth() + 1).padStart(2, '0');
-  const dd = String(friday.getDate()).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
   return `${yyyy}-${mm}-${dd}`;
 }
 
@@ -77,7 +72,7 @@ export default function BrowseScreen({ onOpenRelease, onOpenMethodology }: Props
   const [releases, setReleases] = useState<Release[]>([]);
 
   useEffect(() => {
-    const unsub = subscribeToWeeklyReleases(currentWeekOf(), setReleases);
+    const unsub = subscribeToLatestReleases(todayLocalDateString(), setReleases);
     return unsub;
   }, []);
 

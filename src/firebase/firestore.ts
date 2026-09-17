@@ -13,6 +13,7 @@ import {
   query,
   orderBy,
   where,
+  limit,
   onSnapshot,
   collectionGroup,
 } from 'firebase/firestore';
@@ -191,17 +192,24 @@ export interface Release {
   publishedBy: string;
 }
 
-export const subscribeToWeeklyReleases = (
-  weekOf: string,
+// Queries the latest published batch as of `onOrBeforeDate` rather than an exact
+// weekOf match, so a client-side date bug degrades to "shows last week's picks"
+// instead of "shows nothing" (see commit 34606cd for the outage this replaces).
+export const subscribeToLatestReleases = (
+  onOrBeforeDate: string,
   onReleases: (releases: Release[]) => void
 ): (() => void) => {
   const q = query(
     collection(db, COLLECTIONS.RELEASES),
-    where('weekOf', '==', weekOf),
-    orderBy('isFeatured', 'desc')
+    where('weekOf', '<=', onOrBeforeDate),
+    orderBy('weekOf', 'desc'),
+    orderBy('isFeatured', 'desc'),
+    limit(50)
   );
   return onSnapshot(q, snap => {
-    onReleases(snap.docs.map(d => ({ id: d.id, ...d.data() } as Release)));
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data() } as Release));
+    const latestWeekOf = docs[0]?.weekOf;
+    onReleases(latestWeekOf ? docs.filter(r => r.weekOf === latestWeekOf) : []);
   });
 };
 

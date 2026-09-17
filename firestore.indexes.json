@@ -4,7 +4,7 @@
       "collectionGroup": "releases",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "weekOf", "order": "ASCENDING" },
+        { "fieldPath": "weekOf", "order": "DESCENDING" },
         { "fieldPath": "isFeatured", "order": "DESCENDING" }
       ]
     },
