@@ -50,7 +50,9 @@
           }
         }
       ],
-      "@react-native-firebase/app-check"
+      "@react-native-firebase/app-check",
+      "./plugins/withSceneDelegate.js",
+      "./plugins/withPodfileDeploymentTargetFix.js"
     ],
     "extra": {
       "eas": {
