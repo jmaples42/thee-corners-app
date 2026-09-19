@@ -32,9 +32,9 @@ export default function CornersListScreen({
   return (
     <SafeAreaView style={s.container}>
       <View style={s.header}>
-        <Text style={s.sectionLabel}>YOUR CORNERS</Text>
+        <Text style={s.sectionLabel}>MY CORNERS</Text>
         <TouchableOpacity style={s.newBtn} onPress={onCreateCorner}>
-          <Text style={s.newBtnText}>+ CORNER</Text>
+          <Text style={s.newBtnText}>+ NEW CORNER</Text>
         </TouchableOpacity>
       </View>
 

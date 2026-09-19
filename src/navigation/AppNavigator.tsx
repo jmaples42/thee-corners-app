@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Colors } from '../theme/colors';
 import { auth } from '../firebase/config';
-import { signOut } from '../firebase/auth';
 import AuthScreen from '../screens/AuthScreen';
 import UsernameScreen from '../screens/UsernameScreen';
 import GenrePickerScreen from '../screens/GenrePickerScreen';
@@ -15,20 +14,16 @@ import ComposerScreen from '../screens/ComposerScreen';
 import BrowseScreen from '../screens/BrowseScreen';
 import ReleaseDetailScreen from '../screens/ReleaseDetailScreen';
 import MethodologyScreen from '../screens/MethodologyScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen';
 import { Corner, Release, UserProfile, getUserProfile } from '../firebase/firestore';
 
-type Tab = 'home' | 'new' | 'me' | 'settings';
+type Tab = 'connect' | 'discover';
 type Stage = 'loading' | 'auth' | 'username' | 'taste' | 'app';
 type CornersView = 'list' | 'detail' | 'create' | 'compose';
 type BrowseView = 'list' | 'detail' | 'methodology';
 
 const TABS: { key: Tab; label: string; icon: keyof typeof Ionicons.glyphMap; iconActive: keyof typeof Ionicons.glyphMap }[] = [
-  { key: 'home', label: 'Home', icon: 'home-outline', iconActive: 'home' },
-  { key: 'new', label: 'New', icon: 'disc-outline', iconActive: 'disc' },
-  { key: 'me', label: 'Me', icon: 'person-outline', iconActive: 'person' },
-  { key: 'settings', label: 'Settings', icon: 'settings-outline', iconActive: 'settings' },
+  { key: 'connect', label: 'Connect', icon: 'chatbubbles-outline', iconActive: 'chatbubbles' },
+  { key: 'discover', label: 'Discover', icon: 'compass-outline', iconActive: 'compass' },
 ];
 
 function TabBar({ active, onPress }: { active: Tab; onPress: (t: Tab) => void }) {
@@ -113,7 +108,7 @@ export default function AppNavigator() {
   const [pendingPhone, setPendingPhone] = useState('');
   const [pendingUsername, setPendingUsername] = useState('');
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>('home');
+  const [activeTab, setActiveTab] = useState<Tab>('connect');
   const [cornersView, setCornersView] = useState<CornersView>('list');
   const [selectedCorner, setSelectedCorner] = useState<Corner | null>(null);
   const [browseView, setBrowseView] = useState<BrowseView>('list');
@@ -139,19 +134,6 @@ export default function AppNavigator() {
     });
     return unsub;
   }, []);
-
-  const resetToSignedOut = () => {
-    setUid('');
-    setPendingPhone('');
-    setPendingUsername('');
-    setProfile(null);
-    setActiveTab('home');
-    setCornersView('list');
-    setSelectedCorner(null);
-    setBrowseView('list');
-    setSelectedRelease(null);
-    setStage('auth');
-  };
 
   // ── Auth / onboarding stages ────────────────────────────────────────────────
 
@@ -248,7 +230,7 @@ export default function AppNavigator() {
 
   // ── Main app (tabbed) ─────────────────────────────────────────────────────
 
-  const renderHomeTab = () => {
+  const renderConnectTab = () => {
     if (cornersView === 'detail' && selectedCorner) {
       return (
         <CornerDetailScreen
@@ -273,15 +255,15 @@ export default function AppNavigator() {
 
   const handleTabPress = (tab: Tab) => {
     setActiveTab(tab);
-    if (tab === 'home' && cornersView !== 'list' && cornersView !== 'detail') {
+    if (tab === 'connect' && cornersView !== 'list' && cornersView !== 'detail') {
       setCornersView('list');
     }
-    if (tab === 'new' && browseView !== 'list') {
+    if (tab === 'discover' && browseView !== 'list') {
       setBrowseView('list');
     }
   };
 
-  const renderNewTab = () => {
+  const renderDiscoverTab = () => {
     if (browseView === 'detail' && selectedRelease) {
       return (
         <ReleaseDetailScreen
@@ -308,10 +290,8 @@ export default function AppNavigator() {
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'home': return renderHomeTab();
-      case 'new': return renderNewTab();
-      case 'me': return <ProfileScreen uid={uid} username={profile.username} genres={profile.genres} />;
-      case 'settings': return <SettingsScreen onSignOut={() => signOut().finally(resetToSignedOut)} />;
+      case 'connect': return renderConnectTab();
+      case 'discover': return renderDiscoverTab();
     }
   };
 
