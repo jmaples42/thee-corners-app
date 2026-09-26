@@ -5,7 +5,13 @@ import { BigShouldersDisplay_900Black } from '@expo-google-fonts/big-shoulders-d
 import { JetBrainsMono_500Medium } from '@expo-google-fonts/jetbrains-mono';
 import { StatusBar } from 'expo-status-bar';
 import AppNavigator from './src/navigation/AppNavigator';
+import ReleaseQAScreen from './src/qa/ReleaseQAScreen';
 import { Colors } from './src/theme/colors';
+
+// EXPO_PUBLIC_QA_MODE=1 npx expo run:ios — lets an editor preview a week's
+// draft releases (all fields, real ReleaseDetailScreen) before publishing,
+// without needing to sign in. Never set in production.
+const QA_MODE = process.env.EXPO_PUBLIC_QA_MODE === '1';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -26,7 +32,7 @@ export default function App() {
   return (
     <>
       <StatusBar style="dark" />
-      <AppNavigator />
+      {QA_MODE ? <ReleaseQAScreen /> : <AppNavigator />}
     </>
   );
 }
