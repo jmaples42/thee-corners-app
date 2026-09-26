@@ -23,4 +23,5 @@ export const COLLECTIONS = {
   POSTS: 'posts',
   CORNERS: 'corners',
   RELEASES: 'releases',
+  SAVED_RELEASES: 'savedReleases',
 };

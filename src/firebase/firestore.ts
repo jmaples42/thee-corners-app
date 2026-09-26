@@ -170,6 +170,25 @@ export interface EditorsTake {
   isEssential?: boolean;
 }
 
+// Manually curated, same pattern as EditorsTake — there's no live critic-
+// aggregation pipeline (see corners.thefanlab.com's ops.html for that
+// still-unbuilt idea), so this is entered by hand per release, per outlet.
+export interface CriticsHighlight {
+  publication: string;
+  quote: string;
+  score?: string;
+  url?: string;
+}
+
+// A single standout user comment, hand-picked (or later, auto-picked by
+// reaction count) and denormalized onto the release — same shape as
+// EditorsTake so both render the same way, just attributed differently.
+export interface UserHighlight {
+  uid: string;
+  username: string;
+  text: string;
+}
+
 export interface Release {
   id: string;
   weekOf: string;
@@ -184,7 +203,11 @@ export interface Release {
   blurb: string;
   releaseDate: number;
   links: ReleaseLinks;
+  sampleTrackTitle?: string;
+  sampleUrl?: string;
   editorsTake?: EditorsTake;
+  criticsHighlight?: CriticsHighlight;
+  userHighlight?: UserHighlight;
   isFeatured: boolean;
   stillInRotation?: boolean;
   commentCount: number;
@@ -216,6 +239,45 @@ export const subscribeToLatestReleases = (
 export const getRelease = async (releaseId: string): Promise<Release | null> => {
   const snap = await getDoc(doc(db, COLLECTIONS.RELEASES, releaseId));
   return snap.exists() ? ({ id: snap.id, ...snap.data() } as Release) : null;
+};
+
+// ─── Saved Releases ("Save to my Corners") ──────────────────────────────────────
+// A personal bookmark list, not a post into any specific group chat. Doc id is
+// `${uid}_${releaseId}` so saving twice is idempotent and rules can check
+// ownership without a lookup.
+
+export interface SavedRelease {
+  uid: string;
+  releaseId: string;
+  savedAt: number;
+}
+
+const savedReleaseId = (uid: string, releaseId: string) => `${uid}_${releaseId}`;
+
+export const saveRelease = async (uid: string, releaseId: string): Promise<void> => {
+  await setDoc(doc(db, COLLECTIONS.SAVED_RELEASES, savedReleaseId(uid, releaseId)), {
+    uid,
+    releaseId,
+    savedAt: Date.now(),
+  });
+};
+
+export const unsaveRelease = async (uid: string, releaseId: string): Promise<void> => {
+  await deleteDoc(doc(db, COLLECTIONS.SAVED_RELEASES, savedReleaseId(uid, releaseId)));
+};
+
+export const subscribeToSavedReleases = (
+  uid: string,
+  onSaved: (saved: SavedRelease[]) => void
+): (() => void) => {
+  const q = query(
+    collection(db, COLLECTIONS.SAVED_RELEASES),
+    where('uid', '==', uid),
+    orderBy('savedAt', 'desc')
+  );
+  return onSnapshot(q, snap => {
+    onSaved(snap.docs.map(d => d.data() as SavedRelease));
+  });
 };
 
 // ─── Release Comments (subcollection) ───────────────────────────────────────────

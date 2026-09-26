@@ -52,5 +52,14 @@ service cloud.firestore {
         allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
       }
     }
+
+    // "Save to my Corners" — a personal bookmark, doc id is `${uid}_${releaseId}`.
+    match /savedReleases/{savedId} {
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn()
+                    && request.resource.data.uid == request.auth.uid
+                    && savedId == request.resource.data.uid + '_' + request.resource.data.releaseId;
+      allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+    }
   }
 }
