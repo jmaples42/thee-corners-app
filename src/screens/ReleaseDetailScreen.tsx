@@ -249,7 +249,10 @@ const s = StyleSheet.create({
   releaseTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 16, color: Colors.cream },
   releaseArtist: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText, letterSpacing: 1, marginTop: 2 },
   aboveFold: { paddingHorizontal: 20, paddingTop: 18 },
-  art: { width: '100%', height: 220, backgroundColor: Colors.darkBrown, marginBottom: 14 },
+  // Cover art is consistently square at the source (Bandcamp/Spotify/Apple Music
+  // all serve 1:1 images) — aspectRatio instead of a fixed height means the
+  // default `cover` resizeMode no longer crops it into a wide banner shape.
+  art: { width: '100%', aspectRatio: 1, backgroundColor: Colors.darkBrown, marginBottom: 14 },
   artImage: { width: '100%', height: '100%' },
   tagRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap', marginBottom: 10 },
   tag: { borderWidth: 1, borderColor: Colors.olive, paddingHorizontal: 6, paddingVertical: 2 },
