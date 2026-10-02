@@ -129,23 +129,6 @@ export const WEEK_RELEASES: WeekRelease[] = [
   },
   {
     weekOf: '2026-10-02',
-    artist: 'The Fall',
-    title: 'Post Script',
-    coverArtUrl: 'https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/61/97/74/6197743f-77ef-1214-7715-cdff9bc8d3a0/885288037074.jpg/632x632bb.webp',
-    format: 'LP',
-    tier: 'indie',
-    genres: ['Post-Punk'],
-    trackCount: 9,
-    label: 'Cog Sinister',
-    blurb: "final studio album, built from archival Mark E. Smith vocal recordings (2001-2014) completed by longtime collaborators Ed Blaney & Simon Archer; attribution is disputed by Smith's estate manager Pamela Vander",
-    releaseDate: Date.parse('2026-10-02'),
-    links: {
-      appleMusic: 'https://music.apple.com/us/album/post-script/6793614687',
-    },
-    isFeatured: false,
-  },
-  {
-    weekOf: '2026-10-02',
     artist: 'Emily A. Sprague',
     title: 'Cyano',
     coverArtUrl: 'https://f4.bcbits.com/img/a2529266007_5.jpg',
