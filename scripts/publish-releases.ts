@@ -7,8 +7,8 @@
  *      Project Settings → Service Accounts → Generate new private key.
  *      Save it as service-account.json in the repo root (gitignored).
  *   2. Edit scripts/data/releases-<date>.ts with that week's picks.
- *   3. Update WEEK_DATA_FILE below to point at it.
- *   4. npx ts-node scripts/publish-releases.ts
+ *   3. Point scripts/data/current.ts at it (also drives the QA preview).
+ *   4. npm run publish-releases
  *
  * Safe to re-run mid-week — releases are keyed by slug(artist, title) and
  * written with merge:true, so editing a blurb or adding a review link is
@@ -18,7 +18,7 @@
 import * as admin from 'firebase-admin';
 import * as fs from 'fs';
 import * as path from 'path';
-import { WEEK_RELEASES } from './data/releases-2026-10-02';
+import { WEEK_RELEASES } from './data/current';
 
 const serviceAccount = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../service-account.json'), 'utf8')

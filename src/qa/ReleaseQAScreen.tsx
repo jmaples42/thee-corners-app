@@ -3,10 +3,9 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView } from
 import { Colors } from '../theme/colors';
 import { Release } from '../firebase/firestore';
 import ReleaseDetailScreen from '../screens/ReleaseDetailScreen';
-// Editorial QA preview — reads a week's draft file directly, before it's
-// published to Firestore. Point this at the same file as the WEEK_DATA_FILE
-// pointer in scripts/publish-releases.ts; update both when starting a new week.
-import { WEEK_RELEASES } from '../../scripts/data/releases-2026-09-25';
+// Editorial QA preview — reads the active week's draft before it's published
+// to Firestore. Shares scripts/data/current.ts with the publish script.
+import { WEEK_RELEASES } from '../../scripts/data/current';
 
 const QA_UID = 'qa-editor';
 const QA_USERNAME = 'editor';
