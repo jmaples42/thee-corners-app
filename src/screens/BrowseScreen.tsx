@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   View, Text, Image, FlatList, TouchableOpacity, StyleSheet, SafeAreaView,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
 import { Release, subscribeToLatestReleases } from '../firebase/firestore';
 import { TRENDING_2026 } from '../data/trending2026';
+import ReleaseCard from '../components/ReleaseCard';
 
 // subscribeToLatestReleases queries the latest published batch on or before
 // this date, so it only needs today's local date — not which Friday it is.
@@ -16,59 +18,13 @@ function todayLocalDateString(): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-function ReleaseCard({ release, onPress }: { release: Release; onPress: () => void }) {
-  return (
-    <TouchableOpacity style={rc.card} onPress={onPress} activeOpacity={0.85}>
-      <View style={rc.art}>
-        {release.coverArtUrl ? (
-          <Image source={{ uri: release.coverArtUrl }} style={rc.artImage} />
-        ) : (
-          <Text style={rc.artFallback}>{release.artist[0]?.toUpperCase()}</Text>
-        )}
-      </View>
-      <View style={rc.body}>
-        <Text style={rc.title} numberOfLines={1}><Text style={rc.artist}>{release.artist}</Text>  {release.title}</Text>
-        <View style={rc.tagRow}>
-          <View style={rc.tag}><Text style={rc.tagText}>{release.format}</Text></View>
-          <View style={rc.tag}><Text style={rc.tagText}>{release.tier === 'indie' ? 'INDIE' : 'MAJOR'}</Text></View>
-          {release.genres[0] ? (
-            <View style={rc.tag}><Text style={rc.tagText}>{release.genres[0].toUpperCase()}</Text></View>
-          ) : null}
-        </View>
-        {release.blurb ? <Text style={rc.blurb} numberOfLines={2}>{release.blurb}</Text> : null}
-        <Text style={rc.commentCount}>💬 {release.commentCount ?? 0}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
-const rc = StyleSheet.create({
-  card: {
-    flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 16,
-    borderBottomWidth: 1, borderBottomColor: Colors.border,
-  },
-  art: {
-    width: 64, height: 64, backgroundColor: Colors.darkBrown,
-    alignItems: 'center', justifyContent: 'center', marginRight: 14,
-  },
-  artImage: { width: 64, height: 64 },
-  artFallback: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 26, color: Colors.olive },
-  body: { flex: 1, justifyContent: 'center' },
-  title: { fontFamily: 'Inter_400Regular', fontSize: 15, color: Colors.cream, marginBottom: 6 },
-  artist: { fontFamily: 'BigShouldersDisplay_900Black' },
-  tagRow: { flexDirection: 'row', gap: 6, marginBottom: 6 },
-  tag: { borderWidth: 1, borderColor: Colors.olive, paddingHorizontal: 6, paddingVertical: 1 },
-  tagText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.olive, letterSpacing: 1 },
-  blurb: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, lineHeight: 17, marginBottom: 4 },
-  commentCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber },
-});
-
 interface Props {
   onOpenRelease: (release: Release) => void;
   onOpenMethodology: () => void;
+  onOpenSaved: () => void;
 }
 
-export default function BrowseScreen({ onOpenRelease, onOpenMethodology }: Props) {
+export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenSaved }: Props) {
   const [releases, setReleases] = useState<Release[]>([]);
 
   useEffect(() => {
@@ -91,7 +47,13 @@ export default function BrowseScreen({ onOpenRelease, onOpenMethodology }: Props
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View style={s.header}>
-            <Text style={s.wordmark}>Browse</Text>
+            <View style={s.wordmarkRow}>
+              <Text style={s.wordmark}>Browse</Text>
+              <TouchableOpacity style={s.savedBtn} onPress={onOpenSaved}>
+                <Ionicons name="bookmark-outline" size={12} color={Colors.rust} />
+                <Text style={s.savedBtnText}>SAVED</Text>
+              </TouchableOpacity>
+            </View>
             <View style={s.issueStrip}>
               <Text style={s.issueStripText}>ISSUE №38</Text>
               <Text style={s.issueStripSep}>·</Text>
@@ -161,7 +123,13 @@ const s = StyleSheet.create({
   header: {
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 18,
   },
-  wordmark: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 26, color: Colors.cream, marginBottom: 12 },
+  wordmarkRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  wordmark: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 26, color: Colors.cream },
+  savedBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 10, paddingVertical: 6,
+  },
+  savedBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.rust, letterSpacing: 1.5 },
   issueStrip: {
     flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8,
     backgroundColor: Colors.cream, paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16,

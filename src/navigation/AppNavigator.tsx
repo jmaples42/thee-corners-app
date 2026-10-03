@@ -14,12 +14,13 @@ import ComposerScreen from '../screens/ComposerScreen';
 import BrowseScreen from '../screens/BrowseScreen';
 import ReleaseDetailScreen from '../screens/ReleaseDetailScreen';
 import MethodologyScreen from '../screens/MethodologyScreen';
+import SavedReleasesScreen from '../screens/SavedReleasesScreen';
 import { Corner, Release, UserProfile, getUserProfile } from '../firebase/firestore';
 
 type Tab = 'connect' | 'discover';
 type Stage = 'loading' | 'auth' | 'username' | 'taste' | 'app';
 type CornersView = 'list' | 'detail' | 'create' | 'compose';
-type BrowseView = 'list' | 'detail' | 'methodology';
+type BrowseView = 'list' | 'detail' | 'methodology' | 'saved';
 
 const TABS: { key: Tab; label: string; icon: keyof typeof Ionicons.glyphMap; iconActive: keyof typeof Ionicons.glyphMap }[] = [
   { key: 'connect', label: 'Connect', icon: 'chatbubbles-outline', iconActive: 'chatbubbles' },
@@ -113,6 +114,7 @@ export default function AppNavigator() {
   const [selectedCorner, setSelectedCorner] = useState<Corner | null>(null);
   const [browseView, setBrowseView] = useState<BrowseView>('list');
   const [selectedRelease, setSelectedRelease] = useState<Release | null>(null);
+  const [releaseBackTo, setReleaseBackTo] = useState<BrowseView>('list');
 
   // ── Restore a persisted phone-auth session on launch ───────────────────────
 
@@ -270,6 +272,19 @@ export default function AppNavigator() {
           release={selectedRelease}
           currentUid={uid}
           username={profile.username}
+          onBack={() => setBrowseView(releaseBackTo)}
+        />
+      );
+    }
+    if (browseView === 'saved') {
+      return (
+        <SavedReleasesScreen
+          currentUid={uid}
+          onOpenRelease={(release) => {
+            setSelectedRelease(release);
+            setReleaseBackTo('saved');
+            setBrowseView('detail');
+          }}
           onBack={() => setBrowseView('list')}
         />
       );
@@ -281,9 +296,11 @@ export default function AppNavigator() {
       <BrowseScreen
         onOpenRelease={(release) => {
           setSelectedRelease(release);
+          setReleaseBackTo('list');
           setBrowseView('detail');
         }}
         onOpenMethodology={() => setBrowseView('methodology')}
+        onOpenSaved={() => setBrowseView('saved')}
       />
     );
   };
