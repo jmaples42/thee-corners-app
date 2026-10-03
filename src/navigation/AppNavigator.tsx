@@ -15,12 +15,13 @@ import BrowseScreen from '../screens/BrowseScreen';
 import ReleaseDetailScreen from '../screens/ReleaseDetailScreen';
 import MethodologyScreen from '../screens/MethodologyScreen';
 import SavedReleasesScreen from '../screens/SavedReleasesScreen';
+import SearchScreen from '../screens/SearchScreen';
 import { Corner, Release, UserProfile, getUserProfile } from '../firebase/firestore';
 
 type Tab = 'connect' | 'discover';
 type Stage = 'loading' | 'auth' | 'username' | 'taste' | 'app';
 type CornersView = 'list' | 'detail' | 'create' | 'compose';
-type BrowseView = 'list' | 'detail' | 'methodology' | 'saved';
+type BrowseView = 'list' | 'detail' | 'methodology' | 'saved' | 'search';
 
 const TABS: { key: Tab; label: string; icon: keyof typeof Ionicons.glyphMap; iconActive: keyof typeof Ionicons.glyphMap }[] = [
   { key: 'connect', label: 'Connect', icon: 'chatbubbles-outline', iconActive: 'chatbubbles' },
@@ -116,6 +117,7 @@ export default function AppNavigator() {
   const [selectedRelease, setSelectedRelease] = useState<Release | null>(null);
   const [releaseBackTo, setReleaseBackTo] = useState<BrowseView>('list');
   const [browseWeek, setBrowseWeek] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // ── Restore a persisted phone-auth session on launch ───────────────────────
 
@@ -277,6 +279,20 @@ export default function AppNavigator() {
         />
       );
     }
+    if (browseView === 'search') {
+      return (
+        <SearchScreen
+          query={searchQuery}
+          onChangeQuery={setSearchQuery}
+          onOpenRelease={(release) => {
+            setSelectedRelease(release);
+            setReleaseBackTo('search');
+            setBrowseView('detail');
+          }}
+          onBack={() => setBrowseView('list')}
+        />
+      );
+    }
     if (browseView === 'saved') {
       return (
         <SavedReleasesScreen
@@ -302,6 +318,7 @@ export default function AppNavigator() {
         }}
         onOpenMethodology={() => setBrowseView('methodology')}
         onOpenSaved={() => setBrowseView('saved')}
+        onOpenSearch={() => setBrowseView('search')}
         week={browseWeek}
         onChangeWeek={setBrowseWeek}
       />

@@ -270,6 +270,21 @@ export const subscribeToWeekReleases = (
   });
 };
 
+// Every release (all weeks plus Best-of), cached briefly — search filters this
+// on the device, since Firestore has no text search. ~15 docs per week keeps
+// this small; revisit if the collection grows into the thousands.
+let allReleasesCache: { at: number; releases: Release[] } | null = null;
+
+export const getAllReleases = async (): Promise<Release[]> => {
+  if (allReleasesCache && Date.now() - allReleasesCache.at < 5 * 60 * 1000) {
+    return allReleasesCache.releases;
+  }
+  const snap = await getDocs(collection(db, COLLECTIONS.RELEASES));
+  const releases = snap.docs.map(d => ({ id: d.id, ...d.data() } as Release));
+  allReleasesCache = { at: Date.now(), releases };
+  return releases;
+};
+
 export const subscribeToBestOf = (
   year: number,
   onReleases: (releases: Release[]) => void

@@ -8,6 +8,7 @@ import {
   Release, subscribeToLatestReleases, subscribeToBestOf, subscribeToIssues, subscribeToWeekReleases,
 } from '../firebase/firestore';
 import ReleaseCard from '../components/ReleaseCard';
+import { shortDate, issueLabel } from '../utils/issues';
 
 // subscribeToLatestReleases queries the latest published batch on or before
 // this date, so it only needs today's local date — not which Friday it is.
@@ -23,40 +24,16 @@ interface Props {
   onOpenRelease: (release: Release) => void;
   onOpenMethodology: () => void;
   onOpenSaved: () => void;
+  onOpenSearch: () => void;
   // null = the latest issue. Held by the navigator so it survives opening a release and coming back.
   week: string | null;
   onChangeWeek: (week: string | null) => void;
 }
 
-// Issue №38 was the week of 2026-09-11; later weeks continue the weekly count.
-const ISSUE_ANCHOR = { weekOf: '2026-09-11', number: 38 };
-const DAY_NAMES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-
-function parseLocalDate(weekOf: string): Date {
-  const [y, m, d] = weekOf.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
-
 const BEST_OF_YEAR = 2026;
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-function shortDate(weekOf: string): string {
-  const d = parseLocalDate(weekOf);
-  return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
-}
-
-function issueLabel(weekOf: string) {
-  const weeks = Math.round(
-    (parseLocalDate(weekOf).getTime() - parseLocalDate(ISSUE_ANCHOR.weekOf).getTime()) / (7 * 86400000)
-  );
-  return {
-    number: ISSUE_ANCHOR.number + weeks,
-    date: `${DAY_NAMES[parseLocalDate(weekOf).getDay()]} ${weekOf.replace(/-/g, '·')}`,
-  };
-}
 
 export default function BrowseScreen({
-  onOpenRelease, onOpenMethodology, onOpenSaved, week, onChangeWeek,
+  onOpenRelease, onOpenMethodology, onOpenSaved, onOpenSearch, week, onChangeWeek,
 }: Props) {
   const [releases, setReleases] = useState<Release[]>([]);
   const [bestOf, setBestOf] = useState<Release[]>([]);
@@ -110,10 +87,15 @@ export default function BrowseScreen({
           <View style={s.header}>
             <View style={s.wordmarkRow}>
               <Text style={s.wordmark}>Browse</Text>
-              <TouchableOpacity style={s.savedBtn} onPress={onOpenSaved}>
-                <Ionicons name="bookmark-outline" size={12} color={Colors.rust} />
-                <Text style={s.savedBtnText}>SAVED</Text>
-              </TouchableOpacity>
+              <View style={s.headerActions}>
+                <TouchableOpacity style={s.searchBtn} onPress={onOpenSearch} accessibilityLabel="Search releases">
+                  <Ionicons name="search" size={14} color={Colors.rust} />
+                </TouchableOpacity>
+                <TouchableOpacity style={s.savedBtn} onPress={onOpenSaved}>
+                  <Ionicons name="bookmark-outline" size={12} color={Colors.rust} />
+                  <Text style={s.savedBtnText}>SAVED</Text>
+                </TouchableOpacity>
+              </View>
             </View>
             {issue && (
               <View style={s.issueStrip}>
@@ -235,6 +217,11 @@ const s = StyleSheet.create({
   },
   wordmarkRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   wordmark: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 26, color: Colors.cream },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  searchBtn: {
+    borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 10, paddingVertical: 6,
+    alignItems: 'center', justifyContent: 'center',
+  },
   savedBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 10, paddingVertical: 6,
