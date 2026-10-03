@@ -24,6 +24,25 @@ interface Props {
   onOpenSaved: () => void;
 }
 
+// Issue №38 was the week of 2026-09-11; later weeks continue the weekly count.
+const ISSUE_ANCHOR = { weekOf: '2026-09-11', number: 38 };
+const DAY_NAMES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+function parseLocalDate(weekOf: string): Date {
+  const [y, m, d] = weekOf.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function issueLabel(weekOf: string) {
+  const weeks = Math.round(
+    (parseLocalDate(weekOf).getTime() - parseLocalDate(ISSUE_ANCHOR.weekOf).getTime()) / (7 * 86400000)
+  );
+  return {
+    number: ISSUE_ANCHOR.number + weeks,
+    date: `${DAY_NAMES[parseLocalDate(weekOf).getDay()]} ${weekOf.replace(/-/g, '·')}`,
+  };
+}
+
 export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenSaved }: Props) {
   const [releases, setReleases] = useState<Release[]>([]);
 
@@ -32,6 +51,7 @@ export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenS
     return unsub;
   }, []);
 
+  const issue = releases[0] ? issueLabel(releases[0].weekOf) : null;
   const thisWeek = releases.filter(r => !r.stillInRotation);
   const rotation = releases.filter(r => r.stillInRotation);
 
@@ -54,13 +74,15 @@ export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenS
                 <Text style={s.savedBtnText}>SAVED</Text>
               </TouchableOpacity>
             </View>
-            <View style={s.issueStrip}>
-              <Text style={s.issueStripText}>ISSUE №38</Text>
-              <Text style={s.issueStripSep}>·</Text>
-              <Text style={s.issueStripText}>FRI 2026·09·11</Text>
-              <Text style={s.issueStripSep}>·</Text>
-              <Text style={s.issueStripText}>09:00 ET</Text>
-            </View>
+            {issue && (
+              <View style={s.issueStrip}>
+                <Text style={s.issueStripText}>ISSUE №{issue.number}</Text>
+                <Text style={s.issueStripSep}>·</Text>
+                <Text style={s.issueStripText}>{issue.date}</Text>
+                <Text style={s.issueStripSep}>·</Text>
+                <Text style={s.issueStripText}>09:00 ET</Text>
+              </View>
+            )}
             <Text style={s.dek}>
               <Text style={s.dekLede}>Every Friday we publish a list of the week's most anticipated releases</Text>
               {' '}along with aggregated critical reception from leading music sources. Disagree? Add what you have to say about any release.
