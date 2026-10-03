@@ -24,4 +24,5 @@ export const COLLECTIONS = {
   CORNERS: 'corners',
   RELEASES: 'releases',
   SAVED_RELEASES: 'savedReleases',
+  ISSUES: 'issues',
 };

@@ -51,6 +51,20 @@ async function publish() {
     );
     console.log(`✓ ${release.artist} — ${release.title} (${id})`);
   }
+  // Record the issue so the app can list past weeks (Best-of docs also carry a
+  // weekOf, so the app can't derive the issue list from releases alone).
+  const weekOf = WEEK_RELEASES[0]?.weekOf;
+  if (weekOf) {
+    const ref = db.collection('issues').doc(weekOf);
+    const exists = (await ref.get()).exists;
+    await ref.set(
+      exists
+        ? { weekOf, releaseCount: WEEK_RELEASES.length }
+        : { weekOf, releaseCount: WEEK_RELEASES.length, publishedAt: Date.now() },
+      { merge: true }
+    );
+    console.log(`✓ issue ${weekOf} (${WEEK_RELEASES.length} releases)`);
+  }
   console.log('\nDone.');
 }
 

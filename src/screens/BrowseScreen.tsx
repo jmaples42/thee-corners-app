@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  View, Text, Image, FlatList, TouchableOpacity, StyleSheet, SafeAreaView,
+  View, Text, Image, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, Modal, ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
-import { Release, subscribeToLatestReleases, subscribeToBestOf } from '../firebase/firestore';
+import {
+  Release, subscribeToLatestReleases, subscribeToBestOf, subscribeToIssues, subscribeToWeekReleases,
+} from '../firebase/firestore';
 import ReleaseCard from '../components/ReleaseCard';
 
 // subscribeToLatestReleases queries the latest published batch on or before
@@ -21,6 +23,9 @@ interface Props {
   onOpenRelease: (release: Release) => void;
   onOpenMethodology: () => void;
   onOpenSaved: () => void;
+  // null = the latest issue. Held by the navigator so it survives opening a release and coming back.
+  week: string | null;
+  onChangeWeek: (week: string | null) => void;
 }
 
 // Issue №38 was the week of 2026-09-11; later weeks continue the weekly count.
@@ -50,24 +55,50 @@ function issueLabel(weekOf: string) {
   };
 }
 
-export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenSaved }: Props) {
+export default function BrowseScreen({
+  onOpenRelease, onOpenMethodology, onOpenSaved, week, onChangeWeek,
+}: Props) {
   const [releases, setReleases] = useState<Release[]>([]);
   const [bestOf, setBestOf] = useState<Release[]>([]);
+  const [issues, setIssues] = useState<string[]>([]);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const listRef = useRef<FlatList<Release>>(null);
 
   useEffect(() => {
-    const unsub = subscribeToLatestReleases(todayLocalDateString(), setReleases);
+    const unsub = week
+      ? subscribeToWeekReleases(week, setReleases)
+      : subscribeToLatestReleases(todayLocalDateString(), setReleases);
     return unsub;
-  }, []);
+  }, [week]);
+
+  // Issues are newest-first; hide any dated after today, matching the latest-week query.
+  useEffect(
+    () => subscribeToIssues(weeks => setIssues(weeks.filter(w => w <= todayLocalDateString()))),
+    []
+  );
 
   useEffect(() => subscribeToBestOf(BEST_OF_YEAR, setBestOf), []);
 
-  const issue = releases[0] ? issueLabel(releases[0].weekOf) : null;
+  const currentWeek = week ?? releases[0]?.weekOf ?? issues[0] ?? null;
+  const currentIndex = currentWeek ? issues.indexOf(currentWeek) : -1;
+  const newerWeek = currentIndex > 0 ? issues[currentIndex - 1] : null;
+  const olderWeek = currentIndex >= 0 ? issues[currentIndex + 1] ?? null : null;
+  const isLatest = !week;
+
+  const selectWeek = (w: string) => {
+    onChangeWeek(w === issues[0] ? null : w);
+    setPickerOpen(false);
+    listRef.current?.scrollToOffset({ offset: 0, animated: false });
+  };
+
+  const issue = currentWeek ? issueLabel(currentWeek) : null;
   const thisWeek = releases.filter(r => !r.stillInRotation);
   const rotation = releases.filter(r => r.stillInRotation);
 
   return (
     <SafeAreaView style={s.container}>
       <FlatList
+        ref={listRef}
         data={thisWeek}
         keyExtractor={r => r.id}
         renderItem={({ item }) => (
@@ -86,18 +117,35 @@ export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenS
             </View>
             {issue && (
               <View style={s.issueStrip}>
-                <Text style={s.issueStripText}>ISSUE №{issue.number}</Text>
-                <Text style={s.issueStripSep}>·</Text>
-                <Text style={s.issueStripText}>{issue.date}</Text>
-                <Text style={s.issueStripSep}>·</Text>
-                <Text style={s.issueStripText}>09:00 ET</Text>
+                <TouchableOpacity
+                  disabled={!olderWeek}
+                  onPress={() => olderWeek && selectWeek(olderWeek)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Ionicons name="chevron-back" size={16} color={olderWeek ? Colors.background : Colors.mutedText} />
+                </TouchableOpacity>
+                <TouchableOpacity style={s.issueStripCenter} onPress={() => setPickerOpen(true)}>
+                  <Text style={s.issueStripText}>ISSUE №{issue.number}</Text>
+                  <Text style={s.issueStripSep}>·</Text>
+                  <Text style={s.issueStripText}>{issue.date}</Text>
+                  <Ionicons name="chevron-down" size={11} color={Colors.amber} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={!newerWeek}
+                  onPress={() => newerWeek && selectWeek(newerWeek)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <Ionicons name="chevron-forward" size={16} color={newerWeek ? Colors.background : Colors.mutedText} />
+                </TouchableOpacity>
               </View>
             )}
             <Text style={s.dek}>
               <Text style={s.dekLede}>Every Friday we publish a list of the week's most anticipated releases</Text>
               {' '}along with aggregated critical reception from leading music sources. Disagree? Add what you have to say about any release.
             </Text>
-            <Text style={s.sectionHead}>This Week — Releases</Text>
+            <Text style={s.sectionHead}>
+              {isLatest || !currentWeek ? 'This Week — Releases' : `Week of ${shortDate(currentWeek)} — Releases`}
+            </Text>
           </View>
         }
         ListEmptyComponent={
@@ -155,6 +203,27 @@ export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenS
           </View>
         }
       />
+
+      <Modal visible={pickerOpen} transparent animationType="fade" onRequestClose={() => setPickerOpen(false)}>
+        <TouchableOpacity style={s.modalBackdrop} activeOpacity={1} onPress={() => setPickerOpen(false)}>
+          <View style={s.modalSheet}>
+            <Text style={s.modalTitle}>ISSUES</Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {issues.map(w => {
+                const il = issueLabel(w);
+                return (
+                  <TouchableOpacity key={w} style={s.modalRow} onPress={() => selectWeek(w)}>
+                    <Text style={[s.modalRowText, w === currentWeek && s.modalRowActive]}>
+                      ISSUE №{il.number}  ·  {il.date}
+                    </Text>
+                    {w === currentWeek && <Ionicons name="checkmark" size={14} color={Colors.rust} />}
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -172,13 +241,28 @@ const s = StyleSheet.create({
   },
   savedBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.rust, letterSpacing: 1.5 },
   issueStrip: {
-    flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8,
-    backgroundColor: Colors.cream, paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: Colors.cream, paddingHorizontal: 10, paddingVertical: 8, marginBottom: 16,
   },
+  issueStripCenter: { flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 1 },
   issueStripText: {
     fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.background, letterSpacing: 0.5,
   },
   issueStripSep: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(26,18,14,0.45)', justifyContent: 'center', padding: 24 },
+  modalSheet: {
+    backgroundColor: Colors.cardBg, borderWidth: 1, borderColor: Colors.border,
+    paddingHorizontal: 18, paddingTop: 16, paddingBottom: 8, maxHeight: '70%',
+  },
+  modalTitle: {
+    fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3, marginBottom: 8,
+  },
+  modalRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingVertical: 14, borderTopWidth: 1, borderTopColor: Colors.border,
+  },
+  modalRowText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.mutedText, letterSpacing: 0.5 },
+  modalRowActive: { color: Colors.cream },
   dek: {
     fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.mutedText, lineHeight: 20,
     marginBottom: 20,

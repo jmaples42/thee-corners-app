@@ -53,6 +53,12 @@ service cloud.firestore {
       }
     }
 
+    // One doc per published weekly issue (id = weekOf); written by the publish script.
+    match /issues/{weekOf} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // "Save to my Corners" — a personal bookmark, doc id is `${uid}_${releaseId}`.
     match /savedReleases/{savedId} {
       allow read: if isSignedIn() && resource.data.uid == request.auth.uid;

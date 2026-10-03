@@ -115,6 +115,7 @@ export default function AppNavigator() {
   const [browseView, setBrowseView] = useState<BrowseView>('list');
   const [selectedRelease, setSelectedRelease] = useState<Release | null>(null);
   const [releaseBackTo, setReleaseBackTo] = useState<BrowseView>('list');
+  const [browseWeek, setBrowseWeek] = useState<string | null>(null);
 
   // ── Restore a persisted phone-auth session on launch ───────────────────────
 
@@ -301,6 +302,8 @@ export default function AppNavigator() {
         }}
         onOpenMethodology={() => setBrowseView('methodology')}
         onOpenSaved={() => setBrowseView('saved')}
+        week={browseWeek}
+        onChangeWeek={setBrowseWeek}
       />
     );
   };

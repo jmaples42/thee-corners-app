@@ -240,9 +240,33 @@ export const subscribeToLatestReleases = (
     limit(50)
   );
   return onSnapshot(q, snap => {
-    const docs = snap.docs.map(d => ({ id: d.id, ...d.data() } as Release));
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data() } as Release)).filter(r => !r.bestOf);
     const latestWeekOf = docs[0]?.weekOf;
     onReleases(latestWeekOf ? docs.filter(r => r.weekOf === latestWeekOf) : []);
+  });
+};
+
+// Weeks that have a published issue, newest first (see the `issues` collection,
+// written by scripts/publish-releases.ts).
+export const subscribeToIssues = (onIssues: (weeks: string[]) => void): (() => void) => {
+  const q = query(collection(db, COLLECTIONS.ISSUES), orderBy('weekOf', 'desc'));
+  return onSnapshot(q, snap => {
+    onIssues(snap.docs.map(d => d.data().weekOf as string));
+  });
+};
+
+// One specific week's picks, for browsing past issues.
+export const subscribeToWeekReleases = (
+  weekOf: string,
+  onReleases: (releases: Release[]) => void
+): (() => void) => {
+  const q = query(
+    collection(db, COLLECTIONS.RELEASES),
+    where('weekOf', '==', weekOf),
+    orderBy('isFeatured', 'desc')
+  );
+  return onSnapshot(q, snap => {
+    onReleases(snap.docs.map(d => ({ id: d.id, ...d.data() } as Release)).filter(r => !r.bestOf));
   });
 };
 
