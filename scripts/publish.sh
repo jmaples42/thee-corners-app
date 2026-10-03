@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Runs scripts/publish-releases.ts against production Firestore.
+# Runs a publish script (default: scripts/publish-releases.ts) against production
+# Firestore. Usage: bash scripts/publish.sh [publish-releases|publish-best-of]
 #
 # Why this exists instead of `npx ts-node scripts/publish-releases.ts`:
 # on newer Node versions (v23+), Node's own native TypeScript loader claims
@@ -9,6 +10,7 @@
 # conflict entirely regardless of which Node version is installed.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+NAME="${1:-publish-releases}"
 
 rm -rf .publish-build
 
@@ -16,14 +18,14 @@ rm -rf .publish-build
 # src/firebase/config.ts (see HANDOFF.md's "getReactNativePersistence" note)
 # — it still emits valid JS, so the non-zero exit is expected and ignored.
 npx tsc --module commonjs --target es2020 --esModuleInterop --skipLibCheck \
-  --resolveJsonModule --outDir .publish-build scripts/publish-releases.ts || true
+  --resolveJsonModule --outDir .publish-build scripts/$NAME.ts || true
 
-if [ ! -f .publish-build/scripts/publish-releases.js ]; then
-  echo "publish-releases.js was not emitted — a real compile error, not the known false-positive. Aborting." >&2
+if [ ! -f ".publish-build/scripts/$NAME.js" ]; then
+  echo "$NAME.js was not emitted — a real compile error, not the known false-positive. Aborting." >&2
   rm -rf .publish-build
   exit 1
 fi
 
 cp service-account.json .publish-build/service-account.json
-node .publish-build/scripts/publish-releases.js
+node ".publish-build/scripts/$NAME.js"
 rm -rf .publish-build

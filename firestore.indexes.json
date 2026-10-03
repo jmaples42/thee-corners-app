@@ -9,6 +9,14 @@
       ]
     },
     {
+      "collectionGroup": "releases",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "bestOf.year", "order": "ASCENDING" },
+        { "fieldPath": "bestOf.rank", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "corners",
       "queryScope": "COLLECTION",
       "fields": [

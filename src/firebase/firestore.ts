@@ -189,6 +189,15 @@ export interface UserHighlight {
   text: string;
 }
 
+// Set on releases that belong to a year-end-style "Best of" list. These live in
+// the same collection as weekly picks; their weekOf is the real release Friday,
+// so the latest-week Browse query never surfaces them as "this week".
+export interface BestOf {
+  year: number;
+  rank: number;
+  metacriticScore: number;
+}
+
 export interface Release {
   id: string;
   weekOf: string;
@@ -208,6 +217,7 @@ export interface Release {
   editorsTake?: EditorsTake;
   criticsHighlight?: CriticsHighlight;
   userHighlight?: UserHighlight;
+  bestOf?: BestOf;
   isFeatured: boolean;
   stillInRotation?: boolean;
   commentCount: number;
@@ -233,6 +243,20 @@ export const subscribeToLatestReleases = (
     const docs = snap.docs.map(d => ({ id: d.id, ...d.data() } as Release));
     const latestWeekOf = docs[0]?.weekOf;
     onReleases(latestWeekOf ? docs.filter(r => r.weekOf === latestWeekOf) : []);
+  });
+};
+
+export const subscribeToBestOf = (
+  year: number,
+  onReleases: (releases: Release[]) => void
+): (() => void) => {
+  const q = query(
+    collection(db, COLLECTIONS.RELEASES),
+    where('bestOf.year', '==', year),
+    orderBy('bestOf.rank', 'asc')
+  );
+  return onSnapshot(q, snap => {
+    onReleases(snap.docs.map(d => ({ id: d.id, ...d.data() } as Release)));
   });
 };
 

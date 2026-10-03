@@ -11,6 +11,8 @@ import {
 } from '../firebase/firestore';
 import CommentCard from '../components/CommentCard';
 
+const LINK_LABELS: Record<string, string> = { appleMusic: 'APPLE MUSIC' };
+
 interface Props {
   release: Release;
   currentUid: string;
@@ -147,7 +149,7 @@ export default function ReleaseDetailScreen({ release, currentUid, username, onB
                       style={s.linkPill}
                       onPress={() => Linking.openURL(url as string)}
                     >
-                      <Text style={s.linkPillText}>{source.toUpperCase()}</Text>
+                      <Text style={s.linkPillText}>{LINK_LABELS[source] ?? source.toUpperCase()}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>

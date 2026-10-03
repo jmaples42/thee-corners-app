@@ -4,8 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
-import { Release, subscribeToLatestReleases } from '../firebase/firestore';
-import { TRENDING_2026 } from '../data/trending2026';
+import { Release, subscribeToLatestReleases, subscribeToBestOf } from '../firebase/firestore';
 import ReleaseCard from '../components/ReleaseCard';
 
 // subscribeToLatestReleases queries the latest published batch on or before
@@ -33,6 +32,14 @@ function parseLocalDate(weekOf: string): Date {
   return new Date(y, m - 1, d);
 }
 
+const BEST_OF_YEAR = 2026;
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function shortDate(weekOf: string): string {
+  const d = parseLocalDate(weekOf);
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+}
+
 function issueLabel(weekOf: string) {
   const weeks = Math.round(
     (parseLocalDate(weekOf).getTime() - parseLocalDate(ISSUE_ANCHOR.weekOf).getTime()) / (7 * 86400000)
@@ -45,11 +52,14 @@ function issueLabel(weekOf: string) {
 
 export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenSaved }: Props) {
   const [releases, setReleases] = useState<Release[]>([]);
+  const [bestOf, setBestOf] = useState<Release[]>([]);
 
   useEffect(() => {
     const unsub = subscribeToLatestReleases(todayLocalDateString(), setReleases);
     return unsub;
   }, []);
+
+  useEffect(() => subscribeToBestOf(BEST_OF_YEAR, setBestOf), []);
 
   const issue = releases[0] ? issueLabel(releases[0].weekOf) : null;
   const thisWeek = releases.filter(r => !r.stillInRotation);
@@ -107,6 +117,7 @@ export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenS
               </View>
             )}
 
+            {bestOf.length > 0 && (
             <View style={s.trendingSection}>
               <Text style={s.kicker}>YEAR TO DATE · HIGHEST RATED</Text>
               <Text style={s.trendingTitle}>Still Trending — Best of 2026</Text>
@@ -114,21 +125,29 @@ export default function BrowseScreen({ onOpenRelease, onOpenMethodology, onOpenS
                 Notable releases from this year you may have missed. New studio albums only —
                 no comps, live albums or reissues.
               </Text>
-              {TRENDING_2026.map(t => (
-                <View key={t.rank} style={s.trendingRow}>
-                  <Text style={s.trendingRank}>{t.rank}</Text>
+              {bestOf.map(r => (
+                <TouchableOpacity
+                  key={r.id}
+                  style={s.trendingRow}
+                  onPress={() => onOpenRelease(r)}
+                  activeOpacity={0.75}
+                >
+                  <Text style={s.trendingRank}>{r.bestOf?.rank}</Text>
                   <View style={s.trendingInfo}>
-                    <Text style={s.trendingArtist}>{t.artist}</Text>
-                    <Text style={s.trendingItemTitle}>{t.title}</Text>
-                    <Text style={s.trendingMeta}>{t.label} · {t.genre} · {t.releaseDate}</Text>
+                    <Text style={s.trendingArtist}>{r.artist}</Text>
+                    <Text style={s.trendingItemTitle}>{r.title}</Text>
+                    <Text style={s.trendingMeta}>
+                      {[r.label, r.genres[0], shortDate(r.weekOf)].filter(Boolean).join(' · ')}
+                    </Text>
                   </View>
                   <View style={s.trendingScoreBox}>
-                    <Text style={s.trendingScore}>{t.metacriticScore}</Text>
+                    <Text style={s.trendingScore}>{r.bestOf?.metacriticScore}</Text>
                     <Text style={s.trendingScoreLabel}>Metacritic</Text>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
+            )}
 
             <TouchableOpacity style={s.methodologyLink} onPress={onOpenMethodology}>
               <Text style={s.methodologyLinkText}>How this list gets made →</Text>
