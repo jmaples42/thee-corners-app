@@ -17,6 +17,14 @@
       ]
     },
     {
+      "collectionGroup": "invites",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "phone", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "corners",
       "queryScope": "COLLECTION",
       "fields": [

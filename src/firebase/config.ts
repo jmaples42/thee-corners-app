@@ -25,4 +25,5 @@ export const COLLECTIONS = {
   RELEASES: 'releases',
   SAVED_RELEASES: 'savedReleases',
   ISSUES: 'issues',
+  INVITES: 'invites',
 };

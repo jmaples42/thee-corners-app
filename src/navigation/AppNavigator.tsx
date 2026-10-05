@@ -203,6 +203,8 @@ export default function AppNavigator() {
     return (
       <CreateCornerScreen
         currentUid={uid}
+        currentPhone={profile.phoneNumber}
+        username={profile.username}
         onCreated={(cornerId, cornerName) => {
           setSelectedCorner({
             id: cornerId,
@@ -249,6 +251,7 @@ export default function AppNavigator() {
     return (
       <CornersListScreen
         currentUid={uid}
+        currentPhone={profile.phoneNumber}
         onOpenCorner={(corner) => {
           setSelectedCorner(corner);
           setCornersView('detail');

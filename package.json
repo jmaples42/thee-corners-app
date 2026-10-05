@@ -9,7 +9,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "publish-releases": "bash scripts/publish.sh",
-    "publish-best-of": "bash scripts/publish.sh publish-best-of"
+    "publish-best-of": "bash scripts/publish.sh publish-best-of",
+    "test:rules": "firebase emulators:exec --only firestore --project rules-test \"node --test tests/rules.test.js\""
   },
   "dependencies": {
     "@expo-google-fonts/big-shoulders-display": "^0.2.3",
@@ -25,6 +26,7 @@
     "expo": "~55.0.6",
     "expo-blur": "~55.0.9",
     "expo-build-properties": "~55.0.18",
+    "expo-contacts": "^55.0.18",
     "expo-firebase-recaptcha": "^2.3.1",
     "expo-font": "~55.0.4",
     "expo-haptics": "~55.0.8",
@@ -48,6 +50,7 @@
     }
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
     "@types/react": "~19.2.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",

@@ -14,6 +14,7 @@ import {
   orderBy,
   where,
   limit,
+  writeBatch,
   onSnapshot,
   collectionGroup,
 } from 'firebase/firestore';
@@ -106,10 +107,66 @@ export const subscribeToUserCorners = (
   });
 };
 
-export const addMemberToCorner = async (cornerId: string, uid: string): Promise<void> => {
-  await updateDoc(doc(db, COLLECTIONS.CORNERS, cornerId), {
-    memberUids: arrayUnion(uid),
+// ─── Corner invites ──────────────────────────────────────────────────────────
+// An invite is keyed by the invitee's phone number (E.164), not a uid, so it works
+// whether or not they have the app yet: whoever signs in with that number sees it.
+// Joining is always the invitee's own tap — security rules only let a member's
+// corner update leave memberUids alone, and only an invitee add themselves.
+
+export interface Invite {
+  id: string; // `${phone}_${cornerId}`
+  cornerId: string;
+  cornerName: string;
+  phone: string;
+  invitedByUid: string;
+  invitedByUsername: string;
+  createdAt: number;
+}
+
+const inviteDocId = (phone: string, cornerId: string) => `${phone}_${cornerId}`;
+
+export const createInvites = async (
+  corner: { id: string; name: string },
+  inviter: { uid: string; username: string },
+  phones: string[]
+): Promise<void> => {
+  const batch = writeBatch(db);
+  phones.forEach(phone => {
+    batch.set(doc(db, COLLECTIONS.INVITES, inviteDocId(phone, corner.id)), {
+      cornerId: corner.id,
+      cornerName: corner.name,
+      phone,
+      invitedByUid: inviter.uid,
+      invitedByUsername: inviter.username,
+      createdAt: Date.now(),
+    });
   });
+  await batch.commit();
+};
+
+export const subscribeToMyInvites = (
+  phone: string,
+  onInvites: (invites: Invite[]) => void
+): (() => void) => {
+  const q = query(
+    collection(db, COLLECTIONS.INVITES),
+    where('phone', '==', phone),
+    orderBy('createdAt', 'desc')
+  );
+  return onSnapshot(q, snap => {
+    onInvites(snap.docs.map(d => ({ id: d.id, ...d.data() } as Invite)));
+  });
+};
+
+export const acceptInvite = async (invite: Invite, uid: string): Promise<void> => {
+  const batch = writeBatch(db);
+  batch.update(doc(db, COLLECTIONS.CORNERS, invite.cornerId), { memberUids: arrayUnion(uid) });
+  batch.delete(doc(db, COLLECTIONS.INVITES, invite.id));
+  await batch.commit();
+};
+
+export const declineInvite = async (invite: Invite): Promise<void> => {
+  await deleteDoc(doc(db, COLLECTIONS.INVITES, invite.id));
 };
 
 // ─── Corner Posts (subcollection) ────────────────────────────────────────────

@@ -54,3 +54,6 @@ OUTPUTS/
 
 # Temp compile output for scripts/publish.sh
 .publish-build/
+
+# Firebase emulator logs
+*-debug.log

@@ -11,10 +11,28 @@ service cloud.firestore {
       allow write: if isSignedIn() && request.auth.uid == uid;
     }
 
+    // The invitee's verified sign-in number (Firebase phone auth puts it on the token).
+    function hasInvite(cornerId) {
+      return isSignedIn() && request.auth.token.phone_number != null
+        && exists(/databases/$(database)/documents/invites/$(request.auth.token.phone_number + '_' + cornerId));
+    }
+
     match /corners/{cornerId} {
       allow read: if isSignedIn() && request.auth.uid in resource.data.memberUids;
-      allow create: if isSignedIn() && request.auth.uid in request.resource.data.memberUids;
-      allow update: if isSignedIn() && request.auth.uid in resource.data.memberUids;
+      // Creator starts alone; everyone else joins by accepting an invite.
+      allow create: if isSignedIn() && request.resource.data.memberUids == [request.auth.uid];
+      allow update: if isSignedIn() && (
+        // Members can update the corner (e.g. lastActivityAt) but not change who is in it.
+        (request.auth.uid in resource.data.memberUids
+          && request.resource.data.memberUids == resource.data.memberUids)
+        // An invitee can add exactly themselves, up to the free 5-person limit.
+        || (hasInvite(cornerId)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberUids'])
+          && request.resource.data.memberUids.size() == resource.data.memberUids.size() + 1
+          && request.resource.data.memberUids.hasAll(resource.data.memberUids)
+          && request.auth.uid in request.resource.data.memberUids
+          && request.resource.data.memberUids.size() <= 5)
+      );
 
       match /posts/{postId} {
         allow read: if isSignedIn()
@@ -51,6 +69,25 @@ service cloud.firestore {
                       );
         allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
       }
+    }
+
+    // Corner invites, keyed `${phone}_${cornerId}`. Readable by the invitee (matched on
+    // their verified number) and the inviter; accepting = join the corner + delete.
+    match /invites/{inviteId} {
+      allow read: if isSignedIn() && (
+        resource.data.phone == request.auth.token.phone_number
+        || resource.data.invitedByUid == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.invitedByUid == request.auth.uid
+        && request.resource.data.keys().hasOnly(
+             ['cornerId', 'cornerName', 'phone', 'invitedByUid', 'invitedByUsername', 'createdAt'])
+        && request.resource.data.phone.matches('^\\+[1-9][0-9]{7,14}$')
+        && request.resource.data.cornerName.size() <= 40
+        && inviteId == request.resource.data.phone + '_' + request.resource.data.cornerId
+        && request.auth.uid in get(/databases/$(database)/documents/corners/$(request.resource.data.cornerId)).data.memberUids;
+      allow delete: if isSignedIn() && (
+        resource.data.phone == request.auth.token.phone_number
+        || resource.data.invitedByUid == request.auth.uid);
     }
 
     // One doc per published weekly issue (id = weekOf); written by the publish script.

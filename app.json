@@ -2,7 +2,7 @@
   "expo": {
     "name": "Corners",
     "slug": "thee-corners",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -52,7 +52,13 @@
       ],
       "@react-native-firebase/app-check",
       "./plugins/withSceneDelegate.js",
-      "./plugins/withPodfileDeploymentTargetFix.js"
+      "./plugins/withPodfileDeploymentTargetFix.js",
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Corners lets you pick friends from your contacts to invite to a corner. Only the people you choose are shared."
+        }
+      ]
     ],
     "extra": {
       "eas": {
