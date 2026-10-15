@@ -19,6 +19,8 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "fifth studio album, prod. James Ford, marks a shift from guitars toward synths and samples; closing track 'Where Is Gone?' feat. Rosalía, the band's first-ever studio guest; follows 2024's platinum-certified Romance",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      bandcamp: 'https://fontainesdc.bandcamp.com/album/dopamine-chamber',
+      spotify: 'https://open.spotify.com/album/0JICUfSKOdGqzE9FJSrNci',
       appleMusic: 'https://music.apple.com/us/album/dopamine-chamber/6792085051',
     },
     editorsTake: {
@@ -42,6 +44,7 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: 'first album in six years, 31 tracks incl. three digital-exclusive cuts, built around how advertising and tech reshape memory; guests include Jamie xx, Karen O, Jessy Lanza, Nikki Nair, Rivers Cuomo and Mike Patton',
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      spotify: 'https://open.spotify.com/album/3De7Ues320SIjGCaz5b6fX',
       appleMusic: 'https://music.apple.com/us/album/no-bad-memories/6794202148',
     },
     editorsTake: {
@@ -65,6 +68,7 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "16th studio album from Mark Oliver Everett, follow-up to 2024's EELS TIME!; title drawn from a Cookie Monster line about mourning and gratitude in the same breath; 'Congratulations to Me' is track eight",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      spotify: 'https://open.spotify.com/album/3zLO9SZOSyFdjgBfO7gi2v',
       appleMusic: 'https://music.apple.com/us/album/cookie-happened/6773817552',
     },
     editorsTake: {
@@ -88,6 +92,7 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "second album, follow-up to 2024's What a Devastating Turn of Events and the 2025 Little House EP; framed around a single night out, recorded in London, Hereford and L.A. with contributors incl. Lucy Dacus; lead single 'One Song Away From Crying'",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      spotify: 'https://open.spotify.com/album/354hclDfb4GX3gIXwYknTL',
       appleMusic: 'https://music.apple.com/us/album/i-think-i-spoke-too-soon/6792960696',
     },
     isFeatured: false,
@@ -105,6 +110,8 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "20th studio album, cut live-in-studio in two to four takes in Weehawken, NJ with Taras Prodaniuk, Michael Jerome and David Mansfield; lead single 'Cocaine Walking, Booze Talking'",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      bandcamp: 'https://richardthompsonnwr.bandcamp.com/album/hippies-thugs-and-heroes',
+      spotify: 'https://open.spotify.com/album/4fourLlwRgWXLg9qpirYw9',
       appleMusic: 'https://music.apple.com/us/album/hippies-thugs-and-heroes/6790938632',
     },
     isFeatured: false,
@@ -122,6 +129,7 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "first full-length collaboration between the two producers, instrumental, blending IDM, folk, ambient and field recordings; made remotely between Vienna, Wolverhampton and rural Wales; built around the singles 'Lichen Trip' and 'Shame'",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      bandcamp: 'https://bibio.bandcamp.com/album/answers',
       appleMusic: 'https://music.apple.com/us/album/answers/6782087382',
     },
     isFeatured: false,
@@ -139,6 +147,7 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "third album, self-produced with longtime collaborator Tristan Salvati; feat. Justice, Soulwax, and Caroline Polachek & SebastiAn; follow-up to 2021's Nonante-Cinq",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      spotify: 'https://open.spotify.com/album/2VmBZ9e83yVxu4CFMpMOjq',
       appleMusic: 'https://music.apple.com/us/album/instinct/6804661401',
     },
     isFeatured: false,
@@ -157,6 +166,7 @@ export const WEEK_RELEASES: WeekRelease[] = [
     releaseDate: Date.parse('2026-10-16'),
     links: {
       bandcamp: 'https://caspiantheband.bandcamp.com/album/caspian',
+      spotify: 'https://open.spotify.com/album/4jK6fRarLkDV5sxXnjzBl0',
     },
     isFeatured: false,
   },
@@ -173,6 +183,7 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "Faroese artist's first album for Nuclear Blast, follow-up to 2024's Enn; opens with 'Og mánin græt / And the Moon Cried'; single 'Drekafljóð / Dragon Maiden'",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      spotify: 'https://open.spotify.com/album/3kKOpqXPwc68VObrYTFuOP',
       appleMusic: 'https://music.apple.com/us/album/tungl/6782076883',
     },
     isFeatured: false,
@@ -190,6 +201,8 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "third album and first made explicitly for the dancefloor, mixed by Pearson Sound and mastered by Joker; feat. Ouri, Jonah Yano, CFCF and crushed; lead single 'Presence'",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      bandcamp: 'https://jacquesgreene.bandcamp.com/album/jg',
+      spotify: 'https://open.spotify.com/album/0eyTz4axCv1nyRSCHxDNY0',
       appleMusic: 'https://music.apple.com/us/album/jg/6789661356',
     },
     isFeatured: false,
@@ -207,6 +220,8 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "tenth studio album, first full-length with guitarist Tomy Laisto; prod. Miiro Varjus and the band, mixed/mastered by Jens Bogren; singles 'Shadowlife,' 'Gleam in the Black' and 'Arch of the Sky'",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      bandcamp: 'https://centurymedia.bandcamp.com/album/netherworlds-24-bit-hd-audio',
+      spotify: 'https://open.spotify.com/album/4951xpcIwMAPnhBzCY47dn',
       appleMusic: 'https://music.apple.com/us/album/netherworlds/6789116125',
     },
     isFeatured: false,
@@ -224,6 +239,7 @@ export const WEEK_RELEASES: WeekRelease[] = [
     blurb: "sixth studio album, title track opens the record; lead single 'Best Hearts'",
     releaseDate: Date.parse('2026-10-16'),
     links: {
+      spotify: 'https://open.spotify.com/album/0CA3yksFvkd18bScwPhGL1',
       appleMusic: 'https://music.apple.com/us/album/big-stupid-heart/6790584732',
     },
     isFeatured: false,
