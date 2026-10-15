@@ -17,7 +17,10 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "associatedDomains": [
+        "applinks:corners.thefanlab.com"
+      ]
     },
     "android": {
       "package": "com.theecorners.app",

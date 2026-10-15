@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Animated, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Colors } from '../theme/colors';
@@ -17,6 +17,7 @@ import MethodologyScreen from '../screens/MethodologyScreen';
 import SavedReleasesScreen from '../screens/SavedReleasesScreen';
 import SearchScreen from '../screens/SearchScreen';
 import { Corner, Release, UserProfile, getUserProfile } from '../firebase/firestore';
+import { isInviteLink } from '../utils/invite';
 
 type Tab = 'connect' | 'discover';
 type Stage = 'loading' | 'auth' | 'username' | 'taste' | 'app';
@@ -118,6 +119,18 @@ export default function AppNavigator() {
   const [releaseBackTo, setReleaseBackTo] = useState<BrowseView>('list');
   const [browseWeek, setBrowseWeek] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // An invitation link (universal link or custom scheme) sends you to Connect, where the
+  // INVITATIONS card is. A cold start already lands there; this covers the app being open.
+  useEffect(() => {
+    const sub = Linking.addEventListener('url', ({ url }) => {
+      if (isInviteLink(url)) {
+        setActiveTab('connect');
+        setCornersView('list');
+      }
+    });
+    return () => sub.remove();
+  }, []);
 
   // ── Restore a persisted phone-auth session on launch ───────────────────────
 

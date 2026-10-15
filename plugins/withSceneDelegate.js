@@ -8,6 +8,7 @@ const path = require('path');
 // come back on the next prebuild or EAS build once they move to Xcode 27 too.
 
 const SCENE_DELEGATE_SWIFT = `import UIKit
+import React
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
@@ -25,6 +26,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       withModuleName: "main",
       in: window,
       launchOptions: appDelegate.launchOptions)
+  }
+
+  // Under the UIScene lifecycle, universal links and custom-scheme URLs are
+  // delivered here, not to AppDelegate, so forward them to React Native's
+  // Linking module or the JS side never hears about them.
+  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    RCTLinkingManager.application(UIApplication.shared, continue: userActivity, restorationHandler: { _ in })
+  }
+
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    for context in URLContexts {
+      RCTLinkingManager.application(UIApplication.shared, open: context.url, options: [:])
+    }
   }
 }
 `;

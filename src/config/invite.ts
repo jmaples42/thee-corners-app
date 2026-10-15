@@ -1,4 +1,4 @@
-// Download link included in the invite text. Empty until there is a public link
-// (App Store listing, or a public TestFlight link) — until then invitees must
-// already be added as TestFlight testers, and the text just tells them to sign in.
-export const APP_INVITE_URL = '';
+// Included in the invite text. It's a universal link: with the app installed it opens
+// Corners (to the Connect tab, where the invitation is waiting); without it, it opens
+// the landing page on the marketing site (repo jmaples42/corners, invite.html).
+export const APP_INVITE_URL = 'https://corners.thefanlab.com/invite';

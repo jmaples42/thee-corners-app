@@ -93,8 +93,7 @@ export default function CreateCornerScreen({ currentUid, currentPhone, username,
   };
 
   const sendInviteText = (cornerName: string, phones: string[]) => {
-    const link = APP_INVITE_URL ? ` ${APP_INVITE_URL}` : '';
-    const body = `${username} invited you to "${cornerName}" on Corners. Open the app and sign in with this number to join.${link}`;
+    const body = `${username} invited you to "${cornerName}" on Corners. Tap to join: ${APP_INVITE_URL}`;
     Linking.openURL(`sms:${phones.join(',')}&body=${encodeURIComponent(body)}`).catch(console.error);
   };
 
