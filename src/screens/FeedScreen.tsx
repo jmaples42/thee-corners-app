@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import {
-  View, Text, FlatList, TouchableOpacity, StyleSheet,
+  View, Text, FlatList, TouchableOpacity, StyleSheet, Image,
   SafeAreaView, RefreshControl,
 } from 'react-native';
 import { Colors } from '../theme/colors';
@@ -144,7 +144,12 @@ export default function FeedScreen({ currentUid, onCompose }: { currentUid: stri
   return (
     <SafeAreaView style={fs.container}>
       <View style={fs.header}>
-        <Text style={fs.wordmark}>Corners</Text>
+        <Image
+          source={require('../../assets/logo-lockup.png')}
+          style={fs.wordmark}
+          accessibilityRole="image"
+          accessibilityLabel="Corners"
+        />
       </View>
 
       {/* Tab strip */}
@@ -187,7 +192,7 @@ export default function FeedScreen({ currentUid, onCompose }: { currentUid: stri
 const fs = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  wordmark: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 26, color: Colors.cream },
+  wordmark: { width: 107, height: 28 },
   tabStrip: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.border },
   tabBtn: { flex: 1, paddingVertical: 12, alignItems: 'center' },
   tabBtnActive: { borderBottomWidth: 2, borderBottomColor: Colors.rust },

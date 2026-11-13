@@ -8,6 +8,7 @@ import {
   Release, subscribeToLatestReleases, subscribeToBestOf, subscribeToIssues, subscribeToWeekReleases,
 } from '../firebase/firestore';
 import ReleaseCard from '../components/ReleaseCard';
+import AppHeader from '../components/AppHeader';
 import { shortDate, issueLabel } from '../utils/issues';
 
 // subscribeToLatestReleases queries the latest published batch on or before
@@ -39,6 +40,7 @@ export default function BrowseScreen({
   const [bestOf, setBestOf] = useState<Release[]>([]);
   const [issues, setIssues] = useState<string[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [headerH, setHeaderH] = useState(48);
   const listRef = useRef<FlatList<Release>>(null);
 
   useEffect(() => {
@@ -74,6 +76,7 @@ export default function BrowseScreen({
 
   return (
     <SafeAreaView style={s.container}>
+      <View style={{ flex: 1 }}>
       <FlatList
         ref={listRef}
         data={thisWeek}
@@ -84,19 +87,7 @@ export default function BrowseScreen({
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={s.header}>
-            <View style={s.wordmarkRow}>
-              <Text style={s.wordmark}>Browse</Text>
-              <View style={s.headerActions}>
-                <TouchableOpacity style={s.searchBtn} onPress={onOpenSearch} accessibilityLabel="Search releases">
-                  <Ionicons name="search" size={14} color={Colors.rust} />
-                </TouchableOpacity>
-                <TouchableOpacity style={s.savedBtn} onPress={onOpenSaved}>
-                  <Ionicons name="bookmark-outline" size={12} color={Colors.rust} />
-                  <Text style={s.savedBtnText}>SAVED</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+          <View style={[s.header, { paddingTop: headerH + 12 }]}>
             {issue && (
               <View style={s.issueStrip}>
                 <TouchableOpacity
@@ -185,6 +176,21 @@ export default function BrowseScreen({
           </View>
         }
       />
+      <AppHeader
+        onHeight={setHeaderH}
+        right={
+          <>
+            <TouchableOpacity style={s.searchBtn} onPress={onOpenSearch} accessibilityLabel="Search releases">
+              <Ionicons name="search" size={14} color={Colors.rust} />
+            </TouchableOpacity>
+            <TouchableOpacity style={s.savedBtn} onPress={onOpenSaved}>
+              <Ionicons name="bookmark-outline" size={12} color={Colors.rust} />
+              <Text style={s.savedBtnText}>SAVED</Text>
+            </TouchableOpacity>
+          </>
+        }
+      />
+      </View>
 
       <Modal visible={pickerOpen} transparent animationType="fade" onRequestClose={() => setPickerOpen(false)}>
         <TouchableOpacity style={s.modalBackdrop} activeOpacity={1} onPress={() => setPickerOpen(false)}>
@@ -215,9 +221,6 @@ const s = StyleSheet.create({
   header: {
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 18,
   },
-  wordmarkRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  wordmark: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 26, color: Colors.cream },
-  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   searchBtn: {
     borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 10, paddingVertical: 6,
     alignItems: 'center', justifyContent: 'center',

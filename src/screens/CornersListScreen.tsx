@@ -3,6 +3,7 @@ import {
   View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
+import AppHeader from '../components/AppHeader';
 import {
   Corner, Invite, subscribeToUserCorners, subscribeToMyInvites, acceptInvite, declineInvite,
 } from '../firebase/firestore';
@@ -28,6 +29,7 @@ export default function CornersListScreen({
   const [corners, setCorners] = useState<Corner[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [busyInvite, setBusyInvite] = useState<string | null>(null);
+  const [headerH, setHeaderH] = useState(48);
 
   useEffect(() => {
     if (!currentPhone) return;
@@ -67,17 +69,12 @@ export default function CornersListScreen({
 
   return (
     <SafeAreaView style={s.container}>
-      <View style={s.header}>
-        <Text style={s.sectionLabel}>MY CORNERS</Text>
-        <TouchableOpacity style={s.newBtn} onPress={onCreateCorner}>
-          <Text style={s.newBtnText}>+ NEW CORNER</Text>
-        </TouchableOpacity>
-      </View>
-
+      <View style={{ flex: 1 }}>
       <FlatList
         data={corners}
         ListHeaderComponent={
-          invites.length > 0 ? (
+          <View style={{ paddingTop: headerH }}>
+          {invites.length > 0 && (
             <View style={s.invitesSection}>
               <Text style={s.sectionLabel}>INVITATIONS</Text>
               {invites.map(inv => (
@@ -101,7 +98,9 @@ export default function CornersListScreen({
                 </View>
               ))}
             </View>
-          ) : null
+          )}
+          <Text style={s.listLabel}>MY CORNERS</Text>
+          </View>
         }
         keyExtractor={c => c.id}
         showsVerticalScrollIndicator={false}
@@ -132,16 +131,24 @@ export default function CornersListScreen({
           </View>
         }
       />
+      <AppHeader
+        onHeight={setHeaderH}
+        right={
+          <TouchableOpacity style={s.newBtn} onPress={onCreateCorner}>
+            <Text style={s.newBtnText}>+ NEW CORNER</Text>
+          </TouchableOpacity>
+        }
+      />
+      </View>
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12,
-    borderBottomWidth: 1, borderBottomColor: Colors.border,
+  listLabel: {
+    fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.amber,
+    letterSpacing: 3, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10,
   },
   sectionLabel: {
     fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.amber,

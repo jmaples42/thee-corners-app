@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Image,
   SafeAreaView, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
@@ -77,8 +77,12 @@ export default function AuthScreen({ onAuthenticated }: Props) {
       />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.inner}>
         <View style={s.logo}>
-          <Text style={s.wordmark}>Thee</Text>
-          <Text style={s.wordmark}>Corners</Text>
+          <Image
+            source={require('../../assets/logo-lockup.png')}
+            style={s.lockup}
+            accessibilityRole="image"
+            accessibilityLabel="Corners"
+          />
           <View style={s.rule} />
           <Text style={s.tagline}>WHERE MUSIC FINDS ITS PEOPLE</Text>
         </View>
@@ -146,7 +150,8 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   inner: { flex: 1, paddingHorizontal: 32, justifyContent: 'center' },
   logo: { alignItems: 'center', marginBottom: 56 },
-  wordmark: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 52, color: Colors.cream, lineHeight: 56, letterSpacing: 2 },
+  // logo-lockup.png is 3.83:1; @2x/@3x files are picked automatically
+  lockup: { width: 215, height: 56, marginBottom: 4 },
   rule: { width: 120, height: 1, backgroundColor: Colors.rust, marginVertical: 12 },
   tagline: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3 },
   label: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber, letterSpacing: 3, marginBottom: 12 },
