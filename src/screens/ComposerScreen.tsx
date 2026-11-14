@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  View, Text, Image, TextInput, TouchableOpacity, StyleSheet,
   SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
 import { createCornerPost, PostTag, LinkMeta } from '../firebase/firestore';
+import { YOUTUBE_API_KEY } from '../config/youtube';
+import {
+  YouTubeResult, YouTubeSearchError, searchYouTube, parseYouTubeId, youtubeThumbnail, fetchYouTubeOEmbed,
+} from '../utils/youtube';
 
 const TAGS: PostTag[] = ['On Rotation', 'Digging This Week', 'Recent Discovery'];
 const TAG_DESCS: Record<PostTag, string> = {
@@ -53,18 +57,61 @@ export default function ComposerScreen({
   const [loading, setLoading] = useState(false);
   const [posted, setPosted] = useState(false);
 
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<YouTubeResult[] | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState('');
+  const linkSeq = useRef(0);
+
   const handleLinkChange = (val: string) => {
     setLink(val);
-    // TODO: Debounce + real oEmbed fetch
-    if (val.startsWith('http')) {
-      setLinkMeta({
-        source: detectSource(val),
-        title: parseTitle(val),
-        url: val,
-      });
-    } else {
+    const seq = ++linkSeq.current;
+    if (!val.startsWith('http')) {
       setLinkMeta(null);
+      return;
     }
+    const videoId = detectSource(val) === 'youtube' ? parseYouTubeId(val) : null;
+    if (videoId) {
+      // Thumbnail straight away; the real title and channel follow from oEmbed.
+      setLinkMeta({ source: 'youtube', title: parseTitle(val), url: val, thumbnail: youtubeThumbnail(videoId) });
+      fetchYouTubeOEmbed(videoId).then(info => {
+        if (info && seq === linkSeq.current) {
+          setLinkMeta(m => (m ? { ...m, title: info.title || m.title, channel: info.channel } : m));
+        }
+      });
+      return;
+    }
+    // TODO: oEmbed for Spotify / Bandcamp / SoundCloud
+    setLinkMeta({ source: detectSource(val), title: parseTitle(val), url: val });
+  };
+
+  // Runs on submit, not per keystroke: every search spends 100 of the key's 10,000 daily units.
+  const handleSearch = async () => {
+    if (!query.trim() || searching) return;
+    setSearching(true);
+    setSearchError('');
+    try {
+      setResults(await searchYouTube(query));
+    } catch (e) {
+      setResults(null);
+      setSearchError(
+        e instanceof YouTubeSearchError && e.kind === 'quota'
+          ? "Search is taking a break for today. Paste a link instead."
+          : e instanceof YouTubeSearchError && e.kind === 'network'
+            ? "Couldn't reach YouTube. Check your connection or paste a link."
+            : "YouTube search isn't working right now. Paste a link instead.",
+      );
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const pickResult = (r: YouTubeResult) => {
+    ++linkSeq.current;
+    setLink(r.url);
+    setLinkMeta({ source: 'youtube', title: r.title, url: r.url, thumbnail: r.thumbnail, channel: r.channel });
+    setResults(null);
+    setQuery('');
   };
 
   const handlePost = async () => {
@@ -118,9 +165,50 @@ export default function ComposerScreen({
           <View style={{ width: 50 }} />
         </View>
 
-        <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
+        <ScrollView style={s.scroll} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          {!!YOUTUBE_API_KEY && (
+            <View style={s.section}>
+              <Text style={s.label}>SEARCH YOUTUBE</Text>
+              <Text style={s.hint}>Find a clip and it plays right in the chat.</Text>
+              <View style={s.searchRow}>
+                <TextInput
+                  style={[s.linkInput, s.searchInput]}
+                  value={query}
+                  onChangeText={setQuery}
+                  onSubmitEditing={handleSearch}
+                  placeholder="Artist, song, live set..."
+                  placeholderTextColor={Colors.mutedText}
+                  returnKeyType="search"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity
+                  style={[s.searchBtn, !query.trim() && s.postBtnDisabled]}
+                  onPress={handleSearch}
+                  disabled={!query.trim() || searching}
+                >
+                  {searching
+                    ? <ActivityIndicator color={Colors.cream} />
+                    : <Text style={s.searchBtnText}>SEARCH</Text>}
+                </TouchableOpacity>
+              </View>
+              {!!searchError && <Text style={s.searchError}>{searchError}</Text>}
+              {results && results.length === 0 && (
+                <Text style={s.searchError}>Nothing playable found. Try different words.</Text>
+              )}
+              {results?.map(r => (
+                <TouchableOpacity key={r.videoId} style={s.result} onPress={() => pickResult(r)} activeOpacity={0.75}>
+                  <Image source={{ uri: r.thumbnail }} style={s.resultThumb} />
+                  <View style={s.resultMeta}>
+                    <Text style={s.resultTitle} numberOfLines={2}>{r.title}</Text>
+                    <Text style={s.resultChannel} numberOfLines={1}>{r.channel.toUpperCase()}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
           <View style={s.section}>
-            <Text style={s.label}>THE LINK</Text>
+            <Text style={s.label}>{YOUTUBE_API_KEY ? 'OR PASTE A LINK' : 'THE LINK'}</Text>
             <Text style={s.hint}>Spotify · Bandcamp · YouTube · SoundCloud</Text>
             <TextInput
               style={s.linkInput}
@@ -136,12 +224,18 @@ export default function ComposerScreen({
 
           {linkMeta && (
             <View style={s.preview}>
-              <View style={s.previewArt}>
-                <Text style={s.previewArtText}>{linkMeta.source[0].toUpperCase()}</Text>
-              </View>
+              {linkMeta.thumbnail ? (
+                <Image source={{ uri: linkMeta.thumbnail }} style={s.previewThumb} />
+              ) : (
+                <View style={s.previewArt}>
+                  <Text style={s.previewArtText}>{linkMeta.source[0].toUpperCase()}</Text>
+                </View>
+              )}
               <View style={s.previewMeta}>
                 <Text style={s.previewTitle} numberOfLines={2}>{linkMeta.title}</Text>
-                <Text style={s.previewSource}>{linkMeta.source.toUpperCase()}</Text>
+                <Text style={s.previewSource}>
+                  {linkMeta.source.toUpperCase()}{linkMeta.channel ? `  ·  ${linkMeta.channel.toUpperCase()}` : ''}
+                </Text>
               </View>
             </View>
           )}
@@ -229,7 +323,21 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', marginRight: 12,
   },
   previewArtText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.olive },
+  previewThumb: { width: 85, height: 48, marginRight: 12, backgroundColor: Colors.cardBg },
   previewMeta: { flex: 1 },
+  searchRow: { flexDirection: 'row', gap: 8 },
+  searchInput: { flex: 1 },
+  searchBtn: { backgroundColor: Colors.rust, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center', minWidth: 84 },
+  searchBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.cream, letterSpacing: 2 },
+  searchError: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.rust, marginTop: 10 },
+  result: {
+    flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10,
+    borderBottomWidth: 1, borderBottomColor: Colors.border,
+  },
+  resultThumb: { width: 112, height: 63, backgroundColor: Colors.cardBg },
+  resultMeta: { flex: 1 },
+  resultTitle: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.cream, lineHeight: 18 },
+  resultChannel: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.mutedText, letterSpacing: 1, marginTop: 4 },
   previewTitle: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream },
   previewSource: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 1, marginTop: 4 },
   noteInput: {

@@ -4,6 +4,8 @@ import {
 } from 'react-native';
 import { Colors } from '../theme/colors';
 import { Corner, Post, subscribeToCornerPosts, toggleReaction } from '../firebase/firestore';
+import YouTubeTile from '../components/YouTubeTile';
+import { parseYouTubeId } from '../utils/youtube';
 
 const REACTIONS = ['🔥', '🫀', '🌙', '🐘'];
 
@@ -24,6 +26,7 @@ function timeAgo(ts: number) {
 
 function PostCard({ post, currentUid, cornerId }: { post: Post; currentUid: string; cornerId: string }) {
   const reactions = post.reactions;
+  const videoId = post.linkMeta.source === 'youtube' ? parseYouTubeId(post.link) : null;
 
   const handleToggleReaction = (emoji: string) => {
     const current = reactions[emoji] ?? [];
@@ -48,19 +51,23 @@ function PostCard({ post, currentUid, cornerId }: { post: Post; currentUid: stri
         </View>
       </View>
 
-      <View style={pc.linkCard}>
-        <View style={pc.linkArt}>
-          <Text style={pc.linkArtText}>{post.linkMeta.source[0].toUpperCase()}</Text>
-        </View>
-        <View style={pc.linkMeta}>
-          <Text style={pc.linkTitle} numberOfLines={2}>{post.linkMeta.title}</Text>
-          <View style={[pc.sourceBadge, { borderColor: SOURCE_COLORS[post.linkMeta.source] }]}>
-            <Text style={[pc.sourceText, { color: SOURCE_COLORS[post.linkMeta.source] }]}>
-              {post.linkMeta.source.toUpperCase()}
-            </Text>
+      {videoId ? (
+        <YouTubeTile videoId={videoId} meta={post.linkMeta} />
+      ) : (
+        <View style={pc.linkCard}>
+          <View style={pc.linkArt}>
+            <Text style={pc.linkArtText}>{post.linkMeta.source[0].toUpperCase()}</Text>
+          </View>
+          <View style={pc.linkMeta}>
+            <Text style={pc.linkTitle} numberOfLines={2}>{post.linkMeta.title}</Text>
+            <View style={[pc.sourceBadge, { borderColor: SOURCE_COLORS[post.linkMeta.source] }]}>
+              <Text style={[pc.sourceText, { color: SOURCE_COLORS[post.linkMeta.source] }]}>
+                {post.linkMeta.source.toUpperCase()}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
+      )}
 
       <Text style={pc.note}>{post.text}</Text>
 

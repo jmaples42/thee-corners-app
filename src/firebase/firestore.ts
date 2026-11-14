@@ -31,6 +31,7 @@ export interface UserProfile {
 export interface LinkMeta {
   title: string;
   thumbnail?: string;
+  channel?: string;
   source: 'spotify' | 'bandcamp' | 'youtube' | 'soundcloud' | 'other';
   url: string;
 }
