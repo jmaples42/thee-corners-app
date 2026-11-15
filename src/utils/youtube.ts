@@ -40,7 +40,7 @@ export function youtubeWatchUrl(videoId: string): string {
 }
 
 // The API returns titles HTML-escaped ("Don&#39;t Stop", "AT&amp;T").
-function decodeEntities(s: string): string {
+export function decodeEntities(s: string): string {
   return s
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)))

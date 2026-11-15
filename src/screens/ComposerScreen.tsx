@@ -7,6 +7,7 @@ import { Colors } from '../theme/colors';
 import { Font } from '../theme/typography';
 import { createCornerPost, LinkMeta } from '../firebase/firestore';
 import { YOUTUBE_API_KEY } from '../config/youtube';
+import { fetchLinkMeta } from '../utils/linkMeta';
 import {
   YouTubeResult, YouTubeSearchError, searchYouTube, parseYouTubeId, youtubeThumbnail, fetchYouTubeOEmbed,
 } from '../utils/youtube';
@@ -20,7 +21,9 @@ function detectSource(url: string): LinkMeta['source'] {
 }
 
 function parseTitle(url: string): string {
-  // TODO: Real oEmbed fetch — stub extracts domain + path
+  // Placeholder until the lookup returns (and the fallback if it fails): never a bare id.
+  const sp = url.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album|playlist|episode|show|artist)\//);
+  if (sp) return `Spotify ${sp[1]}`;
   try {
     const u = new URL(url);
     const parts = u.pathname.split('/').filter(Boolean);
@@ -74,8 +77,14 @@ export default function ComposerScreen({
       });
       return;
     }
-    // TODO: oEmbed for Spotify / Bandcamp / SoundCloud
-    setLinkMeta({ source: detectSource(val), title: parseTitle(val), url: val });
+    const source = detectSource(val);
+    setLinkMeta({ source, title: parseTitle(val), url: val });
+    // The real name and cover art for Spotify / SoundCloud / Bandcamp links.
+    fetchLinkMeta(val, source).then(info => {
+      if (info && seq === linkSeq.current) {
+        setLinkMeta(m => (m ? { ...m, title: info.title, ...(info.thumbnail ? { thumbnail: info.thumbnail } : {}) } : m));
+      }
+    });
   };
 
   // Runs on submit, not per keystroke: every search spends 100 of the key's 10,000 daily units.

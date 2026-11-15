@@ -83,5 +83,5 @@ const s = StyleSheet.create({
   captionRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12 },
   captionText: { flex: 1 },
   title: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 23 },
-  channel: { fontFamily: Font.label, fontSize: 12, color: '#FF0000', letterSpacing: 1, marginTop: 6 },
+  channel: { fontFamily: Font.label, fontSize: 12, color: '#B3001B', letterSpacing: 1, marginTop: 6 },
 });
