@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { ReleaseComment, Release, subscribeToCommentsByUser, getRelease } from '../firebase/firestore';
 import CommentCard from '../components/CommentCard';
 
@@ -87,8 +88,8 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   inner: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 24 },
   sectionLabel: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.amber,
-    letterSpacing: 3, marginBottom: 20,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText,
+    letterSpacing: 1, marginBottom: 20,
   },
   reviewsLabel: { marginTop: 32 },
   profileRow: { flexDirection: 'row', alignItems: 'center' },
@@ -97,12 +98,12 @@ const s = StyleSheet.create({
     borderWidth: 2, borderColor: Colors.rust,
     alignItems: 'center', justifyContent: 'center', marginRight: 16,
   },
-  avatarText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 24, color: Colors.amber },
+  avatarText: { fontFamily: Font.display, fontSize: 24, color: Colors.amberText },
   profileInfo: { flex: 1 },
-  handle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.cream, marginBottom: 8 },
+  handle: { fontFamily: Font.display, fontSize: 20, color: Colors.cream, marginBottom: 8 },
   genreRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   genrePill: { borderWidth: 1, borderColor: Colors.olive, paddingHorizontal: 7, paddingVertical: 2 },
-  genrePillText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.olive, letterSpacing: 1 },
-  empty: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.mutedText, lineHeight: 19 },
+  genrePillText: { fontFamily: Font.label, fontSize: 12, color: Colors.olive, letterSpacing: 1 },
+  empty: { fontFamily: Font.body, fontSize: 15, color: Colors.mutedText, lineHeight: 22 },
   reviewsList: { marginHorizontal: -20 },
 });

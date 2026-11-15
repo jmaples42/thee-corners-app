@@ -4,6 +4,7 @@ import {
   SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { createCornerPost, LinkMeta } from '../firebase/firestore';
 import { YOUTUBE_API_KEY } from '../config/youtube';
 import {
@@ -178,7 +179,7 @@ export default function ComposerScreen({
                   disabled={!query.trim() || searching}
                 >
                   {searching
-                    ? <ActivityIndicator color={Colors.cream} />
+                    ? <ActivityIndicator color={Colors.onRust} />
                     : <Text style={s.searchBtnText}>SEARCH</Text>}
                 </TouchableOpacity>
               </View>
@@ -253,7 +254,7 @@ export default function ComposerScreen({
             activeOpacity={0.8}
           >
             {loading
-              ? <ActivityIndicator color={Colors.cream} />
+              ? <ActivityIndicator color={Colors.onRust} />
               : <Text style={s.postBtnText}>DROP THIS CORNER</Text>}
           </TouchableOpacity>
 
@@ -267,25 +268,25 @@ export default function ComposerScreen({
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   successBg: { alignItems: 'center', justifyContent: 'center' },
-  successMark: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 64, color: Colors.rust, marginBottom: 16 },
-  successTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 28, color: Colors.cream, marginBottom: 8 },
-  successSub: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber, letterSpacing: 3 },
+  successMark: { fontFamily: Font.display, fontSize: 64, color: Colors.rust, marginBottom: 16 },
+  successTitle: { fontFamily: Font.display, fontSize: 28, color: Colors.cream, marginBottom: 8 },
+  successSub: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1 },
   navBar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingVertical: 14,
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
-  cancelBtn: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.mutedText, letterSpacing: 1 },
+  cancelBtn: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1 },
   navCenter: { alignItems: 'center' },
-  navTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 18, color: Colors.cream },
-  navCorner: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 1, marginTop: 2 },
+  navTitle: { fontFamily: Font.display, fontSize: 18, color: Colors.cream },
+  navCorner: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginTop: 2 },
   scroll: { flex: 1 },
   section: { paddingHorizontal: 20, marginTop: 24 },
-  label: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3, marginBottom: 6 },
-  hint: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, marginBottom: 10 },
+  label: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginBottom: 6 },
+  hint: { fontFamily: Font.body, fontSize: 14, color: Colors.mutedText, marginBottom: 10 },
   linkInput: {
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
-    padding: 14, fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream,
+    padding: 14, fontFamily: Font.body, fontSize: 16, color: Colors.cream,
   },
   preview: {
     flexDirection: 'row', backgroundColor: Colors.darkBrown,
@@ -296,34 +297,34 @@ const s = StyleSheet.create({
     width: 48, height: 48, backgroundColor: Colors.cardBg,
     alignItems: 'center', justifyContent: 'center', marginRight: 12,
   },
-  previewArtText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.olive },
+  previewArtText: { fontFamily: Font.display, fontSize: 20, color: Colors.olive },
   previewThumb: { width: 85, height: 48, marginRight: 12, backgroundColor: Colors.cardBg },
   previewMeta: { flex: 1 },
   searchRow: { flexDirection: 'row', gap: 8 },
   searchInput: { flex: 1 },
   searchBtn: { backgroundColor: Colors.rust, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center', minWidth: 84 },
-  searchBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.cream, letterSpacing: 2 },
-  searchError: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.rust, marginTop: 10 },
+  searchBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.onRust, letterSpacing: 1 },
+  searchError: { fontFamily: Font.body, fontSize: 14, color: Colors.rust, marginTop: 10 },
   result: {
     flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10,
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
   resultThumb: { width: 112, height: 63, backgroundColor: Colors.cardBg },
   resultMeta: { flex: 1 },
-  resultTitle: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.cream, lineHeight: 18 },
-  resultChannel: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.mutedText, letterSpacing: 1, marginTop: 4 },
-  previewTitle: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream },
-  previewSource: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 1, marginTop: 4 },
+  resultTitle: { fontFamily: Font.body, fontSize: 15, color: Colors.cream, lineHeight: 21 },
+  resultChannel: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1, marginTop: 4 },
+  previewTitle: { fontFamily: Font.body, fontSize: 16, color: Colors.cream },
+  previewSource: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginTop: 4 },
   noteInput: {
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
-    padding: 14, fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream,
-    minHeight: 110, lineHeight: 22,
+    padding: 14, fontFamily: Font.body, fontSize: 16, color: Colors.cream,
+    minHeight: 110, lineHeight: 25,
   },
-  charCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText, textAlign: 'right', marginTop: 4 },
+  charCount: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, textAlign: 'right', marginTop: 4 },
   postBtn: {
     backgroundColor: Colors.rust, paddingVertical: 18,
     marginHorizontal: 20, alignItems: 'center', marginTop: 28,
   },
-  postBtnDisabled: { backgroundColor: Colors.border },
-  postBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 12, color: Colors.cream, letterSpacing: 3 },
+  postBtnDisabled: { opacity: 0.4 },
+  postBtnText: { fontFamily: Font.label, fontSize: 13, color: Colors.onRust, letterSpacing: 1 },
 });

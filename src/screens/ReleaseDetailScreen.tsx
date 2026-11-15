@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import {
   Release, ReleaseComment, subscribeToReleaseComments, createReleaseComment,
   subscribeToSavedReleases, saveRelease, unsaveRelease,
@@ -248,8 +249,8 @@ const s = StyleSheet.create({
   backText: { fontSize: 22, color: Colors.cream },
   headerCenter: { flex: 1, alignItems: 'center' },
   saveBtn: { width: 40, alignItems: 'flex-end' },
-  releaseTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 16, color: Colors.cream },
-  releaseArtist: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText, letterSpacing: 1, marginTop: 2 },
+  releaseTitle: { fontFamily: Font.display, fontSize: 16, color: Colors.cream },
+  releaseArtist: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1, marginTop: 2 },
   aboveFold: { paddingHorizontal: 20, paddingTop: 18 },
   // Cover art is consistently square at the source (Bandcamp/Spotify/Apple Music
   // all serve 1:1 images) — aspectRatio instead of a fixed height means the
@@ -258,36 +259,36 @@ const s = StyleSheet.create({
   artImage: { width: '100%', height: '100%' },
   tagRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap', marginBottom: 10 },
   tag: { borderWidth: 1, borderColor: Colors.olive, paddingHorizontal: 6, paddingVertical: 2 },
-  tagText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.olive, letterSpacing: 1 },
-  labelLine: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, marginBottom: 4 },
-  blurb: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.cream, opacity: 0.85, lineHeight: 19, marginBottom: 14 },
+  tagText: { fontFamily: Font.label, fontSize: 12, color: Colors.olive, letterSpacing: 1 },
+  labelLine: { fontFamily: Font.body, fontSize: 14, color: Colors.mutedText, marginBottom: 4 },
+  blurb: { fontFamily: Font.body, fontSize: 15, color: Colors.cream, opacity: 0.85, lineHeight: 22, marginBottom: 14 },
   playBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 8, alignSelf: 'flex-start',
     backgroundColor: Colors.cream, paddingHorizontal: 14, paddingVertical: 10, marginBottom: 14,
   },
-  playBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.background, letterSpacing: 1 },
+  playBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.background, letterSpacing: 1 },
   linkRow: { flexDirection: 'row', gap: 8, marginBottom: 18 },
   linkPill: { borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 14, paddingVertical: 8 },
-  linkPillText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.rust, letterSpacing: 1 },
+  linkPillText: { fontFamily: Font.label, fontSize: 12, color: Colors.rust, letterSpacing: 1 },
   editorsTake: {
     backgroundColor: Colors.cardBg, borderLeftWidth: 2, borderLeftColor: Colors.rust,
     padding: 14, marginBottom: 8,
   },
   editorsHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   editorsAvatar: { width: 28, height: 28, backgroundColor: Colors.border, alignItems: 'center', justifyContent: 'center', marginRight: 10 },
-  editorsAvatarText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 12, color: Colors.amber },
-  editorsUsername: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.cream },
-  editorsBadge: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.rust, letterSpacing: 1.5, marginTop: 2 },
-  editorsText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 21, opacity: 0.92 },
+  editorsAvatarText: { fontFamily: Font.display, fontSize: 12, color: Colors.amberText },
+  editorsUsername: { fontFamily: Font.label, fontSize: 12, color: Colors.cream },
+  editorsBadge: { fontFamily: Font.label, fontSize: 12, color: Colors.rust, letterSpacing: 1, marginTop: 2 },
+  editorsText: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 24, opacity: 0.92 },
   criticsHighlight: { borderLeftColor: Colors.amber },
-  criticsPublication: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.cream, letterSpacing: 1 },
-  criticsBadge: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.amber, letterSpacing: 1.5, marginTop: 2 },
-  criticsReadMore: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber, letterSpacing: 0.5, marginTop: 8 },
+  criticsPublication: { fontFamily: Font.label, fontSize: 12, color: Colors.cream, letterSpacing: 1 },
+  criticsBadge: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginTop: 2 },
+  criticsReadMore: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 0.5, marginTop: 8 },
   userHighlight: { borderLeftColor: Colors.olive },
   userHighlightAvatar: { backgroundColor: Colors.olive },
-  userHighlightBadge: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.olive, letterSpacing: 1.5, marginTop: 2 },
+  userHighlightBadge: { fontFamily: Font.label, fontSize: 12, color: Colors.olive, letterSpacing: 1, marginTop: 2 },
   divider: { height: 1, backgroundColor: Colors.border, marginTop: 10 },
-  emptyComments: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.mutedText, textAlign: 'center', paddingVertical: 24 },
+  emptyComments: { fontFamily: Font.body, fontSize: 15, color: Colors.mutedText, textAlign: 'center', paddingVertical: 24 },
   composer: {
     flexDirection: 'row', alignItems: 'flex-end', gap: 10,
     paddingHorizontal: 16, paddingVertical: 12,
@@ -295,10 +296,10 @@ const s = StyleSheet.create({
   },
   composerInput: {
     flex: 1, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
-    paddingHorizontal: 12, paddingVertical: 10, fontFamily: 'Inter_400Regular', fontSize: 14,
+    paddingHorizontal: 12, paddingVertical: 10, fontFamily: Font.body, fontSize: 16,
     color: Colors.cream, maxHeight: 100,
   },
   sendBtn: { backgroundColor: Colors.rust, paddingHorizontal: 16, paddingVertical: 12 },
-  sendBtnDisabled: { backgroundColor: Colors.border },
-  sendBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.cream, letterSpacing: 1 },
+  sendBtnDisabled: { opacity: 0.4 },
+  sendBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.onRust, letterSpacing: 1 },
 });

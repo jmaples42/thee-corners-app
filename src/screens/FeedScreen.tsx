@@ -4,6 +4,7 @@ import {
   SafeAreaView, RefreshControl,
 } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { MOCK_POSTS, Post, PostTag } from '../firebase/firestore';
 
 const TABS: PostTag[] = ['On Rotation', 'Digging This Week', 'Recent Discovery'];
@@ -44,11 +45,11 @@ function LinkCard({ link: _link, linkMeta }: Pick<Post, 'link' | 'linkMeta'>) {
 const lc = StyleSheet.create({
   card: { flexDirection: 'row', backgroundColor: Colors.cardBg, borderLeftWidth: 2, borderLeftColor: Colors.rust, padding: 12, marginBottom: 12 },
   art: { width: 52, height: 52, backgroundColor: Colors.darkBrown, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  artText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 22, color: Colors.olive },
+  artText: { fontFamily: Font.display, fontSize: 22, color: Colors.olive },
   meta: { flex: 1, justifyContent: 'space-between' },
-  title: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 20 },
+  title: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 23 },
   sourceBadge: { borderWidth: 1, paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'flex-start', marginTop: 6 },
-  sourceText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, letterSpacing: 1 },
+  sourceText: { fontFamily: Font.label, fontSize: 12, letterSpacing: 1 },
 });
 
 function PostCard({ post, currentUid }: { post: Post; currentUid: string }) {
@@ -113,14 +114,14 @@ const pc = StyleSheet.create({
   card: { paddingHorizontal: 20, paddingTop: 18 },
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
   avatar: { width: 34, height: 34, backgroundColor: Colors.border, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  avatarText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 15, color: Colors.amber },
+  avatarText: { fontFamily: Font.display, fontSize: 15, color: Colors.amberText },
   headerRight: { flex: 1 },
-  username: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 12, color: Colors.cream },
+  username: { fontFamily: Font.label, fontSize: 13, color: Colors.cream },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
-  timestamp: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText },
+  timestamp: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText },
   genreBadge: { borderWidth: 1, borderColor: Colors.olive, paddingHorizontal: 6, paddingVertical: 1 },
-  genreText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.olive, letterSpacing: 1 },
-  note: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 22, marginBottom: 14, opacity: 0.9 },
+  genreText: { fontFamily: Font.label, fontSize: 12, color: Colors.olive, letterSpacing: 1 },
+  note: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 25, marginBottom: 14, opacity: 0.9 },
   reactionStrip: { flexDirection: 'row', gap: 8, marginBottom: 16 },
   reactionBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg },
   reactionBtnActive: { borderColor: Colors.rust, backgroundColor: '#2a1510' },
@@ -196,14 +197,14 @@ const fs = StyleSheet.create({
   tabStrip: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.border },
   tabBtn: { flex: 1, paddingVertical: 12, alignItems: 'center' },
   tabBtnActive: { borderBottomWidth: 2, borderBottomColor: Colors.rust },
-  tabText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.mutedText, letterSpacing: 1 },
+  tabText: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1 },
   tabTextActive: { color: Colors.cream },
   empty: { padding: 40, alignItems: 'center' },
-  emptyText: { fontFamily: 'Inter_400Regular', fontSize: 16, color: Colors.mutedText },
+  emptyText: { fontFamily: Font.body, fontSize: 17, color: Colors.mutedText },
   fab: {
     position: 'absolute', bottom: 24, right: 24,
     width: 52, height: 52, backgroundColor: Colors.rust,
     alignItems: 'center', justifyContent: 'center',
   },
-  fabText: { fontFamily: 'Inter_400Regular', fontSize: 32, color: Colors.cream, lineHeight: 38 },
+  fabText: { fontFamily: Font.body, fontSize: 32, color: Colors.onRust, lineHeight: 38 },
 });

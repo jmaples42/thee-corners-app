@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { Release } from '../firebase/firestore';
 import ReleaseDetailScreen from '../screens/ReleaseDetailScreen';
 // Editorial QA preview — reads the active week's draft before it's published
@@ -67,11 +68,11 @@ export default function ReleaseQAScreen() {
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber,
-    letterSpacing: 2, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText,
+    letterSpacing: 1, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10,
   },
   row: { paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: Colors.border },
-  rowTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: Colors.cream },
-  rowMeta: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText, marginTop: 4, letterSpacing: 0.5 },
-  rowChecklist: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.olive, marginTop: 4, letterSpacing: 0.5 },
+  rowTitle: { fontFamily: Font.strong, fontSize: 16, color: Colors.cream },
+  rowMeta: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, marginTop: 4, letterSpacing: 0.5 },
+  rowChecklist: { fontFamily: Font.label, fontSize: 12, color: Colors.olive, marginTop: 4, letterSpacing: 0.5 },
 });

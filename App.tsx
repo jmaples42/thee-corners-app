@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { useFonts, Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter';
-import { BigShouldersDisplay_900Black } from '@expo-google-fonts/big-shoulders-display';
-import { JetBrainsMono_500Medium } from '@expo-google-fonts/jetbrains-mono';
+import {
+  useFonts, InterTight_500Medium, InterTight_600SemiBold, InterTight_700Bold, InterTight_800ExtraBold,
+} from '@expo-google-fonts/inter-tight';
 import { StatusBar } from 'expo-status-bar';
 import AppNavigator from './src/navigation/AppNavigator';
 import ReleaseQAScreen from './src/qa/ReleaseQAScreen';
@@ -15,10 +15,10 @@ const QA_MODE = process.env.EXPO_PUBLIC_QA_MODE === '1';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_600SemiBold,
-    BigShouldersDisplay_900Black,
-    JetBrainsMono_500Medium,
+    InterTight_500Medium,
+    InterTight_600SemiBold,
+    InterTight_700Bold,
+    InterTight_800ExtraBold,
   });
 
   if (!fontsLoaded) {

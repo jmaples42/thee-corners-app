@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import {
   ReleaseComment, toggleCommentReaction, deleteReleaseComment, updateReleaseComment,
 } from '../firebase/firestore';
@@ -128,28 +129,28 @@ export default function CommentCard({ comment, currentUid, releaseId, releaseLab
 
 const cc = StyleSheet.create({
   card: { paddingHorizontal: 20, paddingTop: 16 },
-  releaseLabel: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 1, marginBottom: 8 },
+  releaseLabel: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginBottom: 8 },
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   avatar: { width: 30, height: 30, backgroundColor: Colors.border, alignItems: 'center', justifyContent: 'center', marginRight: 10 },
-  avatarText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 13, color: Colors.amber },
+  avatarText: { fontFamily: Font.display, fontSize: 13, color: Colors.amberText },
   headerRight: { flex: 1 },
-  username: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.cream },
-  timestamp: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText, marginTop: 1 },
+  username: { fontFamily: Font.label, fontSize: 12, color: Colors.cream },
+  timestamp: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, marginTop: 1 },
   ownerActions: { flexDirection: 'row', gap: 12 },
-  edit: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 1 },
-  delete: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText, letterSpacing: 1 },
-  text: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 21, marginBottom: 10, opacity: 0.92 },
+  edit: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1 },
+  delete: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1 },
+  text: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 24, marginBottom: 10, opacity: 0.92 },
   editBlock: { marginBottom: 10 },
   editInput: {
     borderWidth: 1, borderColor: Colors.rust, backgroundColor: Colors.cardBg,
-    paddingHorizontal: 12, paddingVertical: 10, fontFamily: 'Inter_400Regular', fontSize: 14,
+    paddingHorizontal: 12, paddingVertical: 10, fontFamily: Font.body, fontSize: 16,
     color: Colors.cream, maxHeight: 120, marginBottom: 8,
   },
   editActions: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 16 },
-  editCancel: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText, letterSpacing: 1 },
+  editCancel: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1 },
   editSaveBtn: { backgroundColor: Colors.rust, paddingHorizontal: 14, paddingVertical: 8 },
-  editSaveBtnDisabled: { backgroundColor: Colors.border },
-  editSaveText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.cream, letterSpacing: 1 },
+  editSaveBtnDisabled: { opacity: 0.4 },
+  editSaveText: { fontFamily: Font.label, fontSize: 12, color: Colors.onRust, letterSpacing: 1 },
   reactionStrip: { flexDirection: 'row', gap: 6, marginBottom: 14 },
   reactionBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
@@ -158,5 +159,5 @@ const cc = StyleSheet.create({
   },
   reactionBtnActive: { borderColor: Colors.rust, backgroundColor: '#2a1510' },
   reactionEmoji: { fontSize: 13 },
-  reactionCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText },
+  reactionCount: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText },
 });

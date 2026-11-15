@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Linking } from 'react-
 import { WebView } from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { LinkMeta } from '../firebase/firestore';
 import { youtubeThumbnail, youtubeWatchUrl } from '../utils/youtube';
 
@@ -81,6 +82,6 @@ const s = StyleSheet.create({
   },
   captionRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12 },
   captionText: { flex: 1 },
-  title: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 20 },
-  channel: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: '#FF0000', letterSpacing: 1, marginTop: 6 },
+  title: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 23 },
+  channel: { fontFamily: Font.label, fontSize: 12, color: '#FF0000', letterSpacing: 1, marginTop: 6 },
 });

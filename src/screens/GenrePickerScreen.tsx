@@ -4,6 +4,7 @@ import {
   ScrollView, ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { saveUserProfile, UserProfile } from '../firebase/firestore';
 
 const GENRES = [
@@ -97,7 +98,7 @@ export default function GenrePickerScreen({ uid, phoneNumber, username, onComple
             activeOpacity={0.8}
           >
             {loading
-              ? <ActivityIndicator color={Colors.cream} />
+              ? <ActivityIndicator color={Colors.onRust} />
               : <Text style={s.ctaText}>ENTER THE CORNERS</Text>}
           </TouchableOpacity>
         </View>
@@ -110,10 +111,10 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   inner: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 },
   header: { marginBottom: 32 },
-  title: { fontFamily: 'Inter_400Regular', fontSize: 36, color: Colors.cream },
-  titleItalic: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 42, color: Colors.cream, marginTop: -8 },
+  title: { fontFamily: Font.body, fontSize: 36, color: Colors.cream },
+  titleItalic: { fontFamily: Font.display, fontSize: 42, color: Colors.cream, marginTop: -8 },
   rule: { width: 80, height: 1, backgroundColor: Colors.rust, marginVertical: 14 },
-  sub: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3 },
+  sub: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 36 },
   tile: {
     width: '47%',
@@ -124,14 +125,14 @@ const s = StyleSheet.create({
     alignItems: 'flex-start',
   },
   tileActive: { borderColor: Colors.rust, backgroundColor: Colors.darkBrown },
-  tileLabel: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.mutedText, marginBottom: 6 },
+  tileLabel: { fontFamily: Font.display, fontSize: 20, color: Colors.mutedText, marginBottom: 6 },
   tileLabelActive: { color: Colors.cream },
-  tileAdj: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.olive, letterSpacing: 1 },
+  tileAdj: { fontFamily: Font.label, fontSize: 12, color: Colors.olive, letterSpacing: 1 },
   tileAdjActive: { color: Colors.rust },
   footer: { alignItems: 'center' },
-  selCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 2, marginBottom: 16 },
-  error: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.rust, marginBottom: 12, textAlign: 'center' },
+  selCount: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginBottom: 16 },
+  error: { fontFamily: Font.body, fontSize: 15, color: Colors.rust, marginBottom: 12, textAlign: 'center' },
   cta: { backgroundColor: Colors.rust, paddingVertical: 18, paddingHorizontal: 48, width: '100%', alignItems: 'center' },
-  ctaDisabled: { backgroundColor: Colors.border },
-  ctaText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 12, color: Colors.cream, letterSpacing: 3 },
+  ctaDisabled: { opacity: 0.4 },
+  ctaText: { fontFamily: Font.label, fontSize: 13, color: Colors.onRust, letterSpacing: 1 },
 });

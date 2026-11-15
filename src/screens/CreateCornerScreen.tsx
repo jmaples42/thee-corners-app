@@ -6,6 +6,7 @@ import {
 import * as Contacts from 'expo-contacts';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { createCorner, createInvites } from '../firebase/firestore';
 import { normalizePhone, formatPhone, phoneOptions } from '../utils/phone';
 import { APP_INVITE_URL } from '../config/invite';
@@ -232,7 +233,7 @@ export default function CreateCornerScreen({ currentUid, currentPhone, username,
             activeOpacity={0.8}
           >
             {loading
-              ? <ActivityIndicator color={Colors.cream} />
+              ? <ActivityIndicator color={Colors.onRust} />
               : <Text style={s.createBtnText}>CREATE CORNER</Text>}
           </TouchableOpacity>
 
@@ -250,44 +251,44 @@ const s = StyleSheet.create({
     paddingHorizontal: 20, paddingVertical: 14,
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
-  cancelBtn: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.mutedText, letterSpacing: 1 },
-  navTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 18, color: Colors.cream },
+  cancelBtn: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1 },
+  navTitle: { fontFamily: Font.display, fontSize: 18, color: Colors.cream },
   scroll: { flex: 1 },
   section: { paddingHorizontal: 20, marginTop: 28 },
-  label: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3, marginBottom: 8 },
-  hint: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, marginBottom: 14, lineHeight: 18 },
+  label: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginBottom: 8 },
+  hint: { fontFamily: Font.body, fontSize: 14, color: Colors.mutedText, marginBottom: 14, lineHeight: 21 },
   nameInput: {
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
-    padding: 16, fontFamily: 'Inter_400Regular', fontSize: 18, color: Colors.cream,
+    padding: 16, fontFamily: Font.body, fontSize: 19, color: Colors.cream,
   },
   phoneInput: {
     flex: 1,
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
-    padding: 14, fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream,
+    padding: 14, fontFamily: Font.body, fontSize: 16, color: Colors.cream,
   },
   chip: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
     paddingHorizontal: 14, paddingVertical: 12, marginBottom: 8,
   },
-  chipName: { fontFamily: 'Inter_600SemiBold', fontSize: 14, color: Colors.cream },
-  chipPhone: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText, marginTop: 2, letterSpacing: 0.5 },
+  chipName: { fontFamily: Font.strong, fontSize: 16, color: Colors.cream },
+  chipPhone: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, marginTop: 2, letterSpacing: 0.5 },
   contactsBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
     borderWidth: 1, borderColor: Colors.rust, paddingVertical: 14, marginTop: 4,
   },
   contactsBtnDisabled: { borderColor: Colors.border },
-  contactsBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.rust, letterSpacing: 2 },
-  orText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, textAlign: 'center', marginVertical: 14 },
+  contactsBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.rust, letterSpacing: 1 },
+  orText: { fontFamily: Font.body, fontSize: 14, color: Colors.mutedText, textAlign: 'center', marginVertical: 14 },
   numberRow: { flexDirection: 'row', gap: 8 },
   addBtn: { backgroundColor: Colors.rust, paddingHorizontal: 18, justifyContent: 'center' },
-  addBtnDisabled: { backgroundColor: Colors.border },
-  addBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.cream, letterSpacing: 2 },
-  errorText: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.rust, marginTop: 8 },
+  addBtnDisabled: { opacity: 0.4 },
+  addBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.onRust, letterSpacing: 1 },
+  errorText: { fontFamily: Font.body, fontSize: 14, color: Colors.rust, marginTop: 8 },
   createBtn: {
     backgroundColor: Colors.rust, paddingVertical: 18,
     marginHorizontal: 20, alignItems: 'center', marginTop: 36,
   },
-  createBtnDisabled: { backgroundColor: Colors.border },
-  createBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 12, color: Colors.cream, letterSpacing: 3 },
+  createBtnDisabled: { opacity: 0.4 },
+  createBtnText: { fontFamily: Font.label, fontSize: 13, color: Colors.onRust, letterSpacing: 1 },
 });

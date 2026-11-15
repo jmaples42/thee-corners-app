@@ -3,6 +3,7 @@ import {
   View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, Alert, ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import AppHeader from '../components/AppHeader';
 import {
   Corner, Invite, subscribeToUserCorners, subscribeToMyInvites, acceptInvite, declineInvite,
@@ -147,24 +148,24 @@ export default function CornersListScreen({
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   listLabel: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.amber,
-    letterSpacing: 3, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText,
+    letterSpacing: 1, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 10,
   },
   sectionLabel: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.amber,
-    letterSpacing: 3,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText,
+    letterSpacing: 1,
   },
   newBtn: { borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 12, paddingVertical: 7 },
-  newBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.rust, letterSpacing: 1 },
+  newBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.rust, letterSpacing: 1 },
   cornerCard: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 20, paddingVertical: 20,
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
   cornerLeft: { flex: 1 },
-  cornerName: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 18, color: Colors.cream, marginBottom: 4 },
-  cornerMeta: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText, letterSpacing: 1 },
-  lastActive: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.olive },
+  cornerName: { fontFamily: Font.display, fontSize: 18, color: Colors.cream, marginBottom: 4 },
+  cornerMeta: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1 },
+  lastActive: { fontFamily: Font.label, fontSize: 12, color: Colors.olive },
   invitesSection: {
     paddingHorizontal: 20, paddingTop: 18, paddingBottom: 8,
     borderBottomWidth: 1, borderBottomColor: Colors.border,
@@ -173,19 +174,19 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.rust, backgroundColor: Colors.cardBg,
     padding: 14, marginTop: 10,
   },
-  inviteText: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 20 },
-  inviteBold: { fontFamily: 'Inter_600SemiBold' },
+  inviteText: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 23 },
+  inviteBold: { fontFamily: Font.strong },
   inviteActions: { flexDirection: 'row', gap: 8, marginTop: 12 },
   acceptBtn: { backgroundColor: Colors.rust, paddingHorizontal: 18, paddingVertical: 10 },
-  acceptBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.cream, letterSpacing: 2 },
+  acceptBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.onRust, letterSpacing: 1 },
   declineBtn: { borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 18, paddingVertical: 10 },
-  declineBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText, letterSpacing: 2 },
+  declineBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1 },
   empty: { padding: 48, alignItems: 'center' },
-  emptyTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 22, color: Colors.cream, marginBottom: 8 },
+  emptyTitle: { fontFamily: Font.display, fontSize: 22, color: Colors.cream, marginBottom: 8 },
   emptyBody: {
-    fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.mutedText,
-    marginBottom: 28, textAlign: 'center', lineHeight: 22,
+    fontFamily: Font.body, fontSize: 16, color: Colors.mutedText,
+    marginBottom: 28, textAlign: 'center', lineHeight: 25,
   },
   emptyBtn: { borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 24, paddingVertical: 12 },
-  emptyBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.rust, letterSpacing: 2 },
+  emptyBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.rust, letterSpacing: 1 },
 });

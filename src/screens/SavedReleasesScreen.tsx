@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { Release, subscribeToSavedReleases, getRelease } from '../firebase/firestore';
 import ReleaseCard from '../components/ReleaseCard';
 
@@ -71,8 +72,8 @@ const s = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
   backText: { fontSize: 22, color: Colors.cream },
-  title: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 22, color: Colors.cream },
+  title: { fontFamily: Font.display, fontSize: 22, color: Colors.cream },
   empty: { alignItems: 'center', paddingTop: 80, paddingHorizontal: 40 },
-  emptyTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.cream, marginBottom: 6 },
-  emptyBody: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.mutedText, textAlign: 'center' },
+  emptyTitle: { fontFamily: Font.display, fontSize: 20, color: Colors.cream, marginBottom: 6 },
+  emptyBody: { fontFamily: Font.body, fontSize: 16, color: Colors.mutedText, textAlign: 'center' },
 });

@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import {
   Release, subscribeToLatestReleases, subscribeToBestOf, subscribeToIssues, subscribeToWeekReleases,
 } from '../firebase/firestore';
@@ -229,45 +230,45 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 6,
     borderWidth: 1, borderColor: Colors.rust, paddingHorizontal: 10, paddingVertical: 6,
   },
-  savedBtnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.rust, letterSpacing: 1.5 },
+  savedBtnText: { fontFamily: Font.label, fontSize: 12, color: Colors.rust, letterSpacing: 1 },
   issueStrip: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     backgroundColor: Colors.cream, paddingHorizontal: 10, paddingVertical: 8, marginBottom: 16,
   },
   issueStripCenter: { flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 1 },
   issueStripText: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.background, letterSpacing: 0.5,
+    fontFamily: Font.label, fontSize: 12, color: Colors.background, letterSpacing: 0.5,
   },
-  issueStripSep: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber },
+  issueStripSep: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(26,18,14,0.45)', justifyContent: 'center', padding: 24 },
   modalSheet: {
     backgroundColor: Colors.cardBg, borderWidth: 1, borderColor: Colors.border,
     paddingHorizontal: 18, paddingTop: 16, paddingBottom: 8, maxHeight: '70%',
   },
   modalTitle: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3, marginBottom: 8,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginBottom: 8,
   },
   modalRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingVertical: 14, borderTopWidth: 1, borderTopColor: Colors.border,
   },
-  modalRowText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.mutedText, letterSpacing: 0.5 },
+  modalRowText: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 0.5 },
   modalRowActive: { color: Colors.cream },
   dek: {
-    fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.mutedText, lineHeight: 20,
+    fontFamily: Font.body, fontSize: 16, color: Colors.mutedText, lineHeight: 23,
     marginBottom: 20,
   },
-  dekLede: { fontFamily: 'Inter_600SemiBold', color: Colors.cream },
+  dekLede: { fontFamily: Font.strong, color: Colors.cream },
   sectionHead: {
-    fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.cream,
+    fontFamily: Font.display, fontSize: 20, color: Colors.cream,
     borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 14,
   },
   empty: { padding: 48, alignItems: 'center' },
-  emptyTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.cream, marginBottom: 8 },
-  emptyBody: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.mutedText },
+  emptyTitle: { fontFamily: Font.display, fontSize: 20, color: Colors.cream, marginBottom: 8 },
+  emptyBody: { fontFamily: Font.body, fontSize: 16, color: Colors.mutedText },
   kicker: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber,
-    letterSpacing: 2, paddingHorizontal: 20, marginBottom: 4,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText,
+    letterSpacing: 1, paddingHorizontal: 20, marginBottom: 4,
   },
   rotationSection: {
     marginTop: 24, borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 16,
@@ -277,10 +278,10 @@ const s = StyleSheet.create({
     paddingTop: 16, paddingHorizontal: 20,
   },
   trendingTitle: {
-    fontFamily: 'BigShouldersDisplay_900Black', fontSize: 22, color: Colors.cream, marginBottom: 6,
+    fontFamily: Font.display, fontSize: 22, color: Colors.cream, marginBottom: 6,
   },
   trendingDek: {
-    fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.mutedText, lineHeight: 19,
+    fontFamily: Font.body, fontSize: 15, color: Colors.mutedText, lineHeight: 22,
     marginBottom: 16,
   },
   trendingRow: {
@@ -288,26 +289,26 @@ const s = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: Colors.border,
   },
   trendingRank: {
-    fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.olive,
+    fontFamily: Font.display, fontSize: 20, color: Colors.olive,
     width: 28,
   },
   trendingInfo: { flex: 1 },
-  trendingArtist: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 14, color: Colors.cream },
-  trendingItemTitle: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.cream, marginTop: 1 },
+  trendingArtist: { fontFamily: Font.display, fontSize: 14, color: Colors.cream },
+  trendingItemTitle: { fontFamily: Font.body, fontSize: 15, color: Colors.cream, marginTop: 1 },
   trendingMeta: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText,
+    fontFamily: Font.label, fontSize: 12, color: Colors.mutedText,
     letterSpacing: 0.5, marginTop: 3,
   },
   trendingScoreBox: { alignItems: 'center', marginLeft: 10 },
-  trendingScore: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 18, color: Colors.rust },
+  trendingScore: { fontFamily: Font.display, fontSize: 18, color: Colors.rust },
   trendingScoreLabel: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 7, color: Colors.mutedText, letterSpacing: 0.5,
+    fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 0.5,
   },
   methodologyLink: {
     marginTop: 28, marginHorizontal: 20, paddingVertical: 16,
     borderWidth: 1, borderColor: Colors.border, alignItems: 'center',
   },
   methodologyLinkText: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber, letterSpacing: 1,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1,
   },
 });

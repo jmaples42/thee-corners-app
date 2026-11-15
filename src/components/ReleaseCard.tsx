@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { Release } from '../firebase/firestore';
 
 export default function ReleaseCard({ release, onPress }: { release: Release; onPress: () => void }) {
@@ -14,7 +15,7 @@ export default function ReleaseCard({ release, onPress }: { release: Release; on
         )}
       </View>
       <View style={rc.body}>
-        <Text style={rc.title} numberOfLines={1}><Text style={rc.artist}>{release.artist}</Text>  {release.title}</Text>
+        <Text style={rc.title} numberOfLines={2}><Text style={rc.artist}>{release.artist}</Text>  {release.title}</Text>
         <View style={rc.tagRow}>
           <View style={rc.tag}><Text style={rc.tagText}>{release.format}</Text></View>
           <View style={rc.tag}><Text style={rc.tagText}>{release.tier === 'indie' ? 'INDIE' : 'MAJOR'}</Text></View>
@@ -39,13 +40,13 @@ const rc = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', marginRight: 14,
   },
   artImage: { width: 64, height: 64 },
-  artFallback: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 26, color: Colors.olive },
+  artFallback: { fontFamily: Font.display, fontSize: 26, color: Colors.olive },
   body: { flex: 1, justifyContent: 'center' },
-  title: { fontFamily: 'Inter_400Regular', fontSize: 15, color: Colors.cream, marginBottom: 6 },
-  artist: { fontFamily: 'BigShouldersDisplay_900Black' },
+  title: { fontFamily: Font.body, fontSize: 17, color: Colors.cream, marginBottom: 6 },
+  artist: { fontFamily: Font.display },
   tagRow: { flexDirection: 'row', gap: 6, marginBottom: 6 },
   tag: { borderWidth: 1, borderColor: Colors.olive, paddingHorizontal: 6, paddingVertical: 1 },
-  tagText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.olive, letterSpacing: 1 },
-  blurb: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, lineHeight: 17, marginBottom: 4 },
-  commentCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber },
+  tagText: { fontFamily: Font.label, fontSize: 12, color: Colors.olive, letterSpacing: 1 },
+  blurb: { fontFamily: Font.body, fontSize: 14, color: Colors.mutedText, lineHeight: 20, marginBottom: 4 },
+  commentCount: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText },
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 
 interface Props {
   onBack: () => void;
@@ -110,26 +111,26 @@ export default function MethodologyScreen({ onBack }: Props) {
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   nav: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
-  back: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.amber, letterSpacing: 1 },
+  back: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1 },
   inner: { paddingHorizontal: 20, paddingBottom: 60 },
   title: {
-    fontFamily: 'BigShouldersDisplay_900Black', fontSize: 30, color: Colors.cream, marginBottom: 18,
+    fontFamily: Font.display, fontSize: 30, color: Colors.cream, marginBottom: 18,
   },
   body: {
-    fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.mutedText, lineHeight: 21,
+    fontFamily: Font.body, fontSize: 16, color: Colors.mutedText, lineHeight: 24,
     marginBottom: 16,
   },
   section: { marginTop: 12, marginBottom: 8 },
   sectionHead: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber,
-    letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText,
+    letterSpacing: 1, textTransform: 'uppercase', marginBottom: 10,
     borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 14,
   },
   listItem: {
-    fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 22,
+    fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 25,
   },
   footer: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.mutedText,
-    letterSpacing: 0.5, marginTop: 24, lineHeight: 16,
+    fontFamily: Font.label, fontSize: 12, color: Colors.mutedText,
+    letterSpacing: 0.5, marginTop: 24, lineHeight: 21,
   },
 });

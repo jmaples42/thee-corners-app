@@ -4,6 +4,7 @@ import {
   SafeAreaView, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { getUserByUsername } from '../firebase/firestore';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
@@ -69,7 +70,7 @@ export default function UsernameScreen({ onSubmit }: Props) {
         {error ? <Text style={s.error}>{error}</Text> : null}
 
         <TouchableOpacity style={s.btn} onPress={handleContinue} disabled={loading}>
-          {loading ? <ActivityIndicator color={Colors.cream} /> : <Text style={s.btnText}>CONTINUE</Text>}
+          {loading ? <ActivityIndicator color={Colors.onRust} /> : <Text style={s.btnText}>CONTINUE</Text>}
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -80,19 +81,19 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   inner: { flex: 1, paddingHorizontal: 32, justifyContent: 'center' },
   header: { marginBottom: 40 },
-  title: { fontFamily: 'Inter_400Regular', fontSize: 36, color: Colors.cream },
-  titleItalic: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 42, color: Colors.cream, marginTop: -8 },
+  title: { fontFamily: Font.body, fontSize: 36, color: Colors.cream },
+  titleItalic: { fontFamily: Font.display, fontSize: 42, color: Colors.cream, marginTop: -8 },
   rule: { width: 80, height: 1, backgroundColor: Colors.rust, marginVertical: 14 },
-  sub: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3 },
+  sub: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1 },
   inputRow: {
     flexDirection: 'row', alignItems: 'center',
     borderBottomWidth: 1, borderBottomColor: Colors.border, marginBottom: 12,
   },
-  at: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 20, color: Colors.mutedText, marginRight: 4, paddingBottom: 12 },
+  at: { fontFamily: Font.label, fontSize: 20, color: Colors.mutedText, marginRight: 4, paddingBottom: 12 },
   input: {
-    flex: 1, fontFamily: 'JetBrainsMono_500Medium', fontSize: 20, color: Colors.cream, paddingBottom: 12,
+    flex: 1, fontFamily: Font.label, fontSize: 20, color: Colors.cream, paddingBottom: 12,
   },
-  error: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.rust, marginBottom: 12 },
+  error: { fontFamily: Font.body, fontSize: 15, color: Colors.rust, marginBottom: 12 },
   btn: { backgroundColor: Colors.rust, paddingVertical: 16, alignItems: 'center', marginTop: 12 },
-  btnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 13, color: Colors.cream, letterSpacing: 3 },
+  btnText: { fontFamily: Font.label, fontSize: 14, color: Colors.onRust, letterSpacing: 1 },
 });

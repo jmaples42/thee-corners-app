@@ -3,6 +3,7 @@ import {
   View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView,
 } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { Corner, Post, subscribeToCornerPosts, toggleReaction } from '../firebase/firestore';
 import YouTubeTile from '../components/YouTubeTile';
 import { parseYouTubeId } from '../utils/youtube';
@@ -153,20 +154,20 @@ const s = StyleSheet.create({
   backBtn: { width: 40, alignItems: 'flex-start' },
   backText: { fontSize: 22, color: Colors.cream },
   headerCenter: { flex: 1, alignItems: 'center' },
-  cornerName: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 16, color: Colors.cream },
+  cornerName: { fontFamily: Font.display, fontSize: 16, color: Colors.cream },
   memberCount: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 9,
+    fontFamily: Font.label, fontSize: 12,
     color: Colors.mutedText, letterSpacing: 1, marginTop: 2,
   },
   empty: { padding: 48, alignItems: 'center' },
-  emptyTitle: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 20, color: Colors.cream, marginBottom: 8 },
-  emptyBody: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.mutedText },
+  emptyTitle: { fontFamily: Font.display, fontSize: 20, color: Colors.cream, marginBottom: 8 },
+  emptyBody: { fontFamily: Font.body, fontSize: 16, color: Colors.mutedText },
   fab: {
     position: 'absolute', bottom: 24, right: 24,
     width: 52, height: 52, backgroundColor: Colors.rust,
     alignItems: 'center', justifyContent: 'center',
   },
-  fabText: { fontFamily: 'Inter_400Regular', fontSize: 32, color: Colors.cream, lineHeight: 38 },
+  fabText: { fontFamily: Font.body, fontSize: 32, color: Colors.onRust, lineHeight: 38 },
 });
 
 const pc = StyleSheet.create({
@@ -176,11 +177,11 @@ const pc = StyleSheet.create({
     width: 34, height: 34, backgroundColor: Colors.border,
     alignItems: 'center', justifyContent: 'center', marginRight: 12,
   },
-  avatarText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 15, color: Colors.amber },
+  avatarText: { fontFamily: Font.display, fontSize: 15, color: Colors.amberText },
   headerRight: { flex: 1 },
-  username: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 12, color: Colors.cream },
+  username: { fontFamily: Font.label, fontSize: 13, color: Colors.cream },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
-  timestamp: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText },
+  timestamp: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText },
   linkCard: {
     flexDirection: 'row', backgroundColor: Colors.cardBg,
     borderLeftWidth: 2, borderLeftColor: Colors.rust,
@@ -190,12 +191,12 @@ const pc = StyleSheet.create({
     width: 52, height: 52, backgroundColor: Colors.darkBrown,
     alignItems: 'center', justifyContent: 'center', marginRight: 12,
   },
-  linkArtText: { fontFamily: 'BigShouldersDisplay_900Black', fontSize: 22, color: Colors.olive },
+  linkArtText: { fontFamily: Font.display, fontSize: 22, color: Colors.olive },
   linkMeta: { flex: 1, justifyContent: 'space-between' },
-  linkTitle: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 20 },
+  linkTitle: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 23 },
   sourceBadge: { borderWidth: 1, paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'flex-start', marginTop: 6 },
-  sourceText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, letterSpacing: 1 },
-  note: { fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, lineHeight: 22, marginBottom: 14, opacity: 0.9 },
+  sourceText: { fontFamily: Font.label, fontSize: 12, letterSpacing: 1 },
+  note: { fontFamily: Font.body, fontSize: 16, color: Colors.cream, lineHeight: 25, marginBottom: 14, opacity: 0.9 },
   reactionStrip: { flexDirection: 'row', gap: 8, marginBottom: 16 },
   reactionBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
@@ -204,6 +205,6 @@ const pc = StyleSheet.create({
   },
   reactionBtnActive: { borderColor: Colors.rust, backgroundColor: '#2a1510' },
   reactionEmoji: { fontSize: 16 },
-  reactionCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText },
+  reactionCount: { fontFamily: Font.label, fontSize: 12, color: Colors.mutedText },
   divider: { height: 1, backgroundColor: Colors.border },
 });

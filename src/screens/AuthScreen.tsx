@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { app } from '../firebase/config';
 import { sendVerificationCode, confirmVerificationCode } from '../firebase/auth';
 
@@ -105,7 +106,7 @@ export default function AuthScreen({ onAuthenticated }: Props) {
             </View>
             {error ? <Text style={s.error}>{error}</Text> : null}
             <TouchableOpacity style={s.btn} onPress={handleSend} disabled={loading}>
-              {loading ? <ActivityIndicator color={Colors.cream} /> : <Text style={s.btnText}>SEND CODE</Text>}
+              {loading ? <ActivityIndicator color={Colors.onRust} /> : <Text style={s.btnText}>SEND CODE</Text>}
             </TouchableOpacity>
             <Text style={s.disclaimer}>No passwords. No algorithm. Just your number.</Text>
           </View>
@@ -134,7 +135,7 @@ export default function AuthScreen({ onAuthenticated }: Props) {
             </View>
             {error ? <Text style={s.error}>{error}</Text> : null}
             <TouchableOpacity style={s.btn} onPress={() => handleVerify(otp)} disabled={loading}>
-              {loading ? <ActivityIndicator color={Colors.cream} /> : <Text style={s.btnText}>VERIFY</Text>}
+              {loading ? <ActivityIndicator color={Colors.onRust} /> : <Text style={s.btnText}>VERIFY</Text>}
             </TouchableOpacity>
             <TouchableOpacity onPress={() => { setStep('phone'); setOtp(''); setError(''); }}>
               <Text style={s.back}>← Back</Text>
@@ -153,20 +154,20 @@ const s = StyleSheet.create({
   // logo-lockup.png is 3.83:1; @2x/@3x files are picked automatically
   lockup: { width: 215, height: 56, marginBottom: 4 },
   rule: { width: 120, height: 1, backgroundColor: Colors.rust, marginVertical: 12 },
-  tagline: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 3 },
-  label: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.amber, letterSpacing: 3, marginBottom: 12 },
-  sub: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.mutedText, marginBottom: 20, marginTop: -8 },
+  tagline: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1 },
+  label: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1, marginBottom: 12 },
+  sub: { fontFamily: Font.body, fontSize: 15, color: Colors.mutedText, marginBottom: 20, marginTop: -8 },
   phoneRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.border, marginBottom: 24 },
   cc: { paddingBottom: 12, marginRight: 12, borderRightWidth: 1, borderRightColor: Colors.border, paddingRight: 12, justifyContent: 'center' },
-  ccText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 16, color: Colors.cream },
-  phoneInput: { flex: 1, fontFamily: 'JetBrainsMono_500Medium', fontSize: 20, color: Colors.cream, paddingBottom: 12 },
+  ccText: { fontFamily: Font.label, fontSize: 16, color: Colors.cream },
+  phoneInput: { flex: 1, fontFamily: Font.label, fontSize: 20, color: Colors.cream, paddingBottom: 12 },
   otpRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24, position: 'relative' },
   otpBox: { width: 44, height: 56, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg, alignItems: 'center', justifyContent: 'center' },
-  otpDigit: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 24, color: Colors.cream },
+  otpDigit: { fontFamily: Font.label, fontSize: 24, color: Colors.cream },
   otpHiddenInput: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0 },
   btn: { backgroundColor: Colors.rust, paddingVertical: 16, alignItems: 'center', marginBottom: 24 },
-  btnText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 13, color: Colors.cream, letterSpacing: 3 },
-  disclaimer: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, textAlign: 'center', lineHeight: 18 },
-  back: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 11, color: Colors.amber, textAlign: 'center', letterSpacing: 1 },
-  error: { fontFamily: 'Inter_400Regular', fontSize: 13, color: Colors.rust, marginBottom: 12 },
+  btnText: { fontFamily: Font.label, fontSize: 14, color: Colors.onRust, letterSpacing: 1 },
+  disclaimer: { fontFamily: Font.body, fontSize: 14, color: Colors.mutedText, textAlign: 'center', lineHeight: 21 },
+  back: { fontFamily: Font.label, fontSize: 12, color: Colors.amberText, textAlign: 'center', letterSpacing: 1 },
+  error: { fontFamily: Font.body, fontSize: 15, color: Colors.rust, marginBottom: 12 },
 });

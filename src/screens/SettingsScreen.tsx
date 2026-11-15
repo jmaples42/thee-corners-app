@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 
 interface Props {
   onSignOut: () => void;
@@ -23,11 +24,11 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   inner: { paddingHorizontal: 20, paddingTop: 12 },
   sectionLabel: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.amber,
-    letterSpacing: 3, marginBottom: 20,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText,
+    letterSpacing: 1, marginBottom: 20,
   },
   signOutBtn: {
     borderWidth: 1, borderColor: Colors.border, paddingVertical: 16, alignItems: 'center',
   },
-  signOutText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.rust, letterSpacing: 2 },
+  signOutText: { fontFamily: Font.label, fontSize: 12, color: Colors.rust, letterSpacing: 1 },
 });

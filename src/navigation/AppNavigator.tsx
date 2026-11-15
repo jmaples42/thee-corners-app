@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Animated, 
 import { Ionicons } from '@expo/vector-icons';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { auth } from '../firebase/config';
 import AuthScreen from '../screens/AuthScreen';
 import UsernameScreen from '../screens/UsernameScreen';
@@ -67,7 +68,7 @@ function TabBar({ active, onPress }: { active: Tab; onPress: (t: Tab) => void })
                 size={20}
                 color={isActive ? Colors.cream : Colors.mutedText}
               />
-              <Text style={[tb.label, isActive && tb.labelActive]}>{t.label}</Text>
+              <Text style={[tb.label, isActive && tb.labelActive]} maxFontSizeMultiplier={1.3}>{t.label}</Text>
             </TouchableOpacity>
           );
         })}
@@ -99,7 +100,7 @@ const tb = StyleSheet.create({
   },
   tab: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 3, paddingVertical: 2 },
   label: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 9,
+    fontFamily: Font.label, fontSize: 12,
     color: Colors.mutedText, letterSpacing: 0.5,
   },
   labelActive: { color: Colors.cream },

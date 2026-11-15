@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../theme/colors';
+import { Font } from '../theme/typography';
 import { Release, getAllReleases } from '../firebase/firestore';
 import ReleaseCard from '../components/ReleaseCard';
 import { issueLabel, shortDate } from '../utils/issues';
@@ -126,17 +127,17 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardBg,
     paddingHorizontal: 12, paddingVertical: 9,
   },
-  input: { flex: 1, fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.cream, padding: 0 },
+  input: { flex: 1, fontFamily: Font.body, fontSize: 16, color: Colors.cream, padding: 0 },
   count: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 9, color: Colors.amber, letterSpacing: 2,
+    fontFamily: Font.label, fontSize: 12, color: Colors.amberText, letterSpacing: 1,
     paddingHorizontal: 20, paddingTop: 14, paddingBottom: 4,
   },
   context: {
-    fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.mutedText, letterSpacing: 1.5,
+    fontFamily: Font.label, fontSize: 12, color: Colors.mutedText, letterSpacing: 1,
     paddingHorizontal: 20, paddingTop: 12,
   },
   empty: {
-    fontFamily: 'Inter_400Regular', fontSize: 14, color: Colors.mutedText, textAlign: 'center',
+    fontFamily: Font.body, fontSize: 16, color: Colors.mutedText, textAlign: 'center',
     paddingHorizontal: 40, paddingTop: 60,
   },
 });
