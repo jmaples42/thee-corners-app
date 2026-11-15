@@ -44,9 +44,6 @@ function PostCard({ post, currentUid, cornerId }: { post: Post; currentUid: stri
           <Text style={pc.username}>@{post.username}</Text>
           <View style={pc.metaRow}>
             <Text style={pc.timestamp}>{timeAgo(post.createdAt)}</Text>
-            <View style={pc.tagBadge}>
-              <Text style={pc.tagText}>{post.tag}</Text>
-            </View>
           </View>
         </View>
       </View>
@@ -184,8 +181,6 @@ const pc = StyleSheet.create({
   username: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 12, color: Colors.cream },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
   timestamp: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText },
-  tagBadge: { borderWidth: 1, borderColor: Colors.olive, paddingHorizontal: 6, paddingVertical: 1 },
-  tagText: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 8, color: Colors.olive, letterSpacing: 1 },
   linkCard: {
     flexDirection: 'row', backgroundColor: Colors.cardBg,
     borderLeftWidth: 2, borderLeftColor: Colors.rust,

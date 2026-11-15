@@ -47,7 +47,8 @@ export interface Post {
   text: string;
   link: string;
   linkMeta: LinkMeta;
-  tag: PostTag;
+  // No longer chosen when posting (the picker was removed); older posts still carry one.
+  tag?: PostTag;
   reactions: Record<string, string[]>;
   createdAt: number;
 }

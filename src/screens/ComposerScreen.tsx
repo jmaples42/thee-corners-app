@@ -4,18 +4,11 @@ import {
   SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../theme/colors';
-import { createCornerPost, PostTag, LinkMeta } from '../firebase/firestore';
+import { createCornerPost, LinkMeta } from '../firebase/firestore';
 import { YOUTUBE_API_KEY } from '../config/youtube';
 import {
   YouTubeResult, YouTubeSearchError, searchYouTube, parseYouTubeId, youtubeThumbnail, fetchYouTubeOEmbed,
 } from '../utils/youtube';
-
-const TAGS: PostTag[] = ['On Rotation', 'Digging This Week', 'Recent Discovery'];
-const TAG_DESCS: Record<PostTag, string> = {
-  'On Rotation': "What you can't stop playing right now",
-  'Digging This Week': "Something you're actively into this week",
-  'Recent Discovery': 'Something you just found',
-};
 
 function detectSource(url: string): LinkMeta['source'] {
   if (url.includes('spotify.com')) return 'spotify';
@@ -53,7 +46,6 @@ export default function ComposerScreen({
   const [link, setLink] = useState('');
   const [linkMeta, setLinkMeta] = useState<LinkMeta | null>(null);
   const [text, setText] = useState('');
-  const [tag, setTag] = useState<PostTag>('On Rotation');
   const [loading, setLoading] = useState(false);
   const [posted, setPosted] = useState(false);
 
@@ -126,7 +118,6 @@ export default function ComposerScreen({
         text,
         link,
         linkMeta,
-        tag,
         reactions: {},
         createdAt: Date.now(),
       });
@@ -255,23 +246,6 @@ export default function ComposerScreen({
             <Text style={s.charCount}>{text.length}/280</Text>
           </View>
 
-          <View style={s.section}>
-            <Text style={s.label}>TAG IT</Text>
-            {TAGS.map(t => (
-              <TouchableOpacity
-                key={t}
-                style={[s.tagRow, tag === t && s.tagRowActive]}
-                onPress={() => setTag(t)}
-              >
-                <View style={[s.radio, tag === t && s.radioActive]} />
-                <View>
-                  <Text style={[s.tagLabel, tag === t && s.tagLabelActive]}>{t}</Text>
-                  <Text style={s.tagDesc}>{TAG_DESCS[t]}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-
           <TouchableOpacity
             style={[s.postBtn, !canPost && s.postBtnDisabled]}
             onPress={handlePost}
@@ -346,16 +320,6 @@ const s = StyleSheet.create({
     minHeight: 110, lineHeight: 22,
   },
   charCount: { fontFamily: 'JetBrainsMono_500Medium', fontSize: 10, color: Colors.mutedText, textAlign: 'right', marginTop: 4 },
-  tagRow: {
-    flexDirection: 'row', alignItems: 'flex-start', gap: 12,
-    paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: Colors.border,
-  },
-  tagRowActive: { backgroundColor: Colors.darkBrown, marginHorizontal: -20, paddingHorizontal: 20 },
-  radio: { width: 16, height: 16, borderWidth: 1, borderColor: Colors.border, marginTop: 2, borderRadius: 8 },
-  radioActive: { borderColor: Colors.rust, backgroundColor: Colors.rust },
-  tagLabel: { fontFamily: 'Inter_400Regular', fontSize: 16, color: Colors.mutedText },
-  tagLabelActive: { color: Colors.cream },
-  tagDesc: { fontFamily: 'Inter_400Regular', fontSize: 12, color: Colors.mutedText, marginTop: 2 },
   postBtn: {
     backgroundColor: Colors.rust, paddingVertical: 18,
     marginHorizontal: 20, alignItems: 'center', marginTop: 28,
